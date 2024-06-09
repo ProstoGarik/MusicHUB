@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Windows.Forms;
 using System.IO;
-using NAudio.Wave;
 using System.Collections;
+using System.Linq;
 
 namespace WinFormsApp1
 {
@@ -12,12 +12,8 @@ namespace WinFormsApp1
     {
         HubConnection hubConnection;
         public string message = "Hello!";
-        public string recievedName;
-        public string sendedName;
-        public string filePath;
         public byte[] tempBytes;
-        public byte[] sendedBytes;
-        public byte[] recievedBytes;
+        public List<byte> recievedBytes;
 
         public Form1()
         {
@@ -25,8 +21,7 @@ namespace WinFormsApp1
             hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7196/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
             tempBytes = new byte[] { };
-            sendedBytes = new byte[] { };
-            recievedBytes = new byte[] { };
+            recievedBytes = new List<byte> { };
         }
 
         public async Task HubConnetction_Closed(Exception? arg)
@@ -39,12 +34,10 @@ namespace WinFormsApp1
         {
             if (listBox1.InvokeRequired)
             {
-                // Если вызов осуществляется из другого потока, используйте метод Invoke
                 listBox1.Invoke(new Action<string>(UpdateListBox), message);
             }
             else
             {
-                // Добавьте сообщение в listBox1
                 listBox1.Items.Add(message);
             }
         }
@@ -55,19 +48,15 @@ namespace WinFormsApp1
             hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
 
             hubConnection.On<List<byte>>("RecieveBytes", bytes => {
-                //if (listBox1.InvokeRequired)
-                //{
-                //    // Если вызов осуществляется из другого потока, используйте метод Invoke
-                //    listBox1.Invoke(new Action<string>(UpdateListBox), "В bytes " + bytes.Length + " байт\n " +
-                //        "В recievedBytes " + recievedBytes.Length + " байт");
-                //}
-                //else
-                //{
-                //    // Добавьте сообщение в listBox1
-                //    listBox1.Items.Add("В bytes " + bytes.Length + " байт\n" +
-                //        "В recievedBytes " + recievedBytes.Length + " байт");
-                //}
-
+                recievedBytes.AddRange(bytes);
+                if (listBox1.InvokeRequired)
+                {
+                    listBox1.Invoke(new Action<string>(UpdateListBox), "Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
+                }
+                else
+                {
+                    listBox1.Items.Add("Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
+                }
             });
             try
             {
@@ -111,11 +100,10 @@ namespace WinFormsApp1
         private void SendFileButton_Click(object sender, EventArgs e)
         {
             LabelSend2.Text = "Отправляется...";
-            List<byte> tempByteChunk = new List<byte>(5000);
-            for (int i = 0; i < tempBytes.Length; i++)
+            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
+            foreach(List<byte> list in listsList)
             {
-                tempByteChunk.Add(tempBytes[i]);
-                hubConnection.InvokeAsync("SendBytes", tempByteChunk.ToArray());
+                hubConnection.InvokeAsync("SendBytes", list);
             }
             
             LabelSend2.Text = "Готово";
@@ -124,8 +112,17 @@ namespace WinFormsApp1
         private void PlayReciewved_Click(object sender, EventArgs e)
         {
             FileRecieved2.Text = "Получаем...";
-            System.IO.File.WriteAllBytes("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
+            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
             FileRecieved2.Text = "Получено";
+        }
+
+        public static List<List<byte>> SplitList(List<byte> source, int size)
+        {
+            return source
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / size)
+                .Select(g => g.Select(v => v.Value).ToList())
+                .ToList();
         }
     }
 }
