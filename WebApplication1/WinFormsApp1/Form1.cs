@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Windows.Forms;
 using System.IO;
+using NAudio.Wave;
+using System.Collections;
 
 namespace WinFormsApp1
 {
@@ -10,7 +12,11 @@ namespace WinFormsApp1
     {
         HubConnection hubConnection;
         public string message = "Hello!";
-        public byte[] fileBytes;
+        public string recievedName;
+        public string sendedName;
+        public string filePath;
+        public byte[] tempBytes;
+        public byte[] sendedBytes;
         public byte[] recievedBytes;
 
         public Form1()
@@ -18,11 +24,14 @@ namespace WinFormsApp1
             InitializeComponent();
             hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7196/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
-            fileBytes = new byte[] { };
+            tempBytes = new byte[] { };
+            sendedBytes = new byte[] { };
+            recievedBytes = new byte[] { };
         }
 
         public async Task HubConnetction_Closed(Exception? arg)
         {
+            listBox1.Items.Add("Соединение разорвано, переподключение...");
             await Task.Delay(new Random().Next(0, 5) * 1000);
             await hubConnection.StartAsync();
         }
@@ -42,19 +51,23 @@ namespace WinFormsApp1
 
         private async void Form1_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
             hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
 
-            hubConnection.On<byte[]>("RecieveBytes", (bytes) =>
-            {
-                recievedBytes = bytes;
-            if (recievedBytes == null)
-                {
-                    FileRecieved2.Text = "True";
-                }
-            else
-                {
-                    FileRecieved2.Text = "False";
-                }
+            hubConnection.On<List<byte>>("RecieveBytes", bytes => {
+                //if (listBox1.InvokeRequired)
+                //{
+                //    // Если вызов осуществляется из другого потока, используйте метод Invoke
+                //    listBox1.Invoke(new Action<string>(UpdateListBox), "В bytes " + bytes.Length + " байт\n " +
+                //        "В recievedBytes " + recievedBytes.Length + " байт");
+                //}
+                //else
+                //{
+                //    // Добавьте сообщение в listBox1
+                //    listBox1.Items.Add("В bytes " + bytes.Length + " байт\n" +
+                //        "В recievedBytes " + recievedBytes.Length + " байт");
+                //}
+
             });
             try
             {
@@ -77,17 +90,19 @@ namespace WinFormsApp1
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "c:\\";
-                openFileDialog.Filter = "mp3 файлы (*.mp3)|*.mp3|Все файлы (*.*)|*.*";
+                openFileDialog.Filter = "wav файлы (*.wav)|*.wav|Все файлы (*.*)|*.*";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
 
+
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    tempBytes = File.ReadAllBytes(openFileDialog.FileName);
+
                     //Get the path of specified file
                     FilePath2.Text = openFileDialog.FileName;
 
                     //Read the contents of the file into a stream
-                    fileBytes = File.ReadAllBytes(openFileDialog.FileName);
 
                 }
             }
@@ -95,12 +110,22 @@ namespace WinFormsApp1
 
         private void SendFileButton_Click(object sender, EventArgs e)
         {
-            hubConnection.InvokeAsync("SendBytes", fileBytes);
+            LabelSend2.Text = "Отправляется...";
+            List<byte> tempByteChunk = new List<byte>(5000);
+            for (int i = 0; i < tempBytes.Length; i++)
+            {
+                tempByteChunk.Add(tempBytes[i]);
+                hubConnection.InvokeAsync("SendBytes", tempByteChunk.ToArray());
+            }
+            
+            LabelSend2.Text = "Готово";
         }
 
         private void PlayReciewved_Click(object sender, EventArgs e)
         {
-            File.WriteAllBytes("somefile.mp3", recievedBytes);
+            FileRecieved2.Text = "Получаем...";
+            System.IO.File.WriteAllBytes("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
+            FileRecieved2.Text = "Получено";
         }
     }
 }

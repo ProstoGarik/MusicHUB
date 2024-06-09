@@ -7,10 +7,10 @@ namespace WebApplication1.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("Recieve", Context.ConnectionId+" Joined");
+            await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined");
         }
 
-        public async Task SendBytes(byte[] bytes)
+        public async Task SendBytes(List<byte> bytes)
         {
             await Clients.All.SendAsync("RecieveBytes", bytes);
         }

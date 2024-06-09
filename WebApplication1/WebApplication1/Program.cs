@@ -18,12 +18,6 @@ if(app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("broadcast", async (string message, IHubContext<ChatHub, IChatClient> context) =>
-{
-    await context.Clients.All.RecieveMessage(message);
-
-    return Results.NoContent();
-});
 app.MapHub<ChatHub>("/chat");
 
 app.Run();

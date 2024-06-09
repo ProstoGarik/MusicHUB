@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormsApp1
+namespace ConsoleApp1
 {
-    public class viewModel
+    internal class Program
     {
-
+        static void Main(string[] args)
+        {
+        }
     }
 }

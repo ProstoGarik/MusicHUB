@@ -38,6 +38,8 @@
             PlayReciewved = new Button();
             FileRecieved2 = new Label();
             FileRecieved1 = new Label();
+            LabelSend1 = new Label();
+            LabelSend2 = new Label();
             SuspendLayout();
             // 
             // listBox1
@@ -132,11 +134,31 @@
             FileRecieved1.TabIndex = 8;
             FileRecieved1.Text = "Файл получен:";
             // 
+            // LabelSend1
+            // 
+            LabelSend1.AutoSize = true;
+            LabelSend1.Location = new Point(576, 309);
+            LabelSend1.Name = "LabelSend1";
+            LabelSend1.Size = new Size(77, 15);
+            LabelSend1.TabIndex = 10;
+            LabelSend1.Text = "Отправлено:";
+            // 
+            // LabelSend2
+            // 
+            LabelSend2.AutoSize = true;
+            LabelSend2.Location = new Point(659, 309);
+            LabelSend2.Name = "LabelSend2";
+            LabelSend2.Size = new Size(36, 15);
+            LabelSend2.TabIndex = 11;
+            LabelSend2.Text = "None";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(LabelSend2);
+            Controls.Add(LabelSend1);
             Controls.Add(FileRecieved2);
             Controls.Add(FileRecieved1);
             Controls.Add(PlayReciewved);
@@ -166,5 +188,7 @@
         private Button PlayReciewved;
         private Label FileRecieved2;
         private Label FileRecieved1;
+        private Label LabelSend1;
+        private Label LabelSend2;
     }
 }
