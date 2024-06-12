@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:WpfApp2"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="CustomFont">
+            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Noto Sans"/>
+        </Style>
     </Application.Resources>
 </Application>

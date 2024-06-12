@@ -88,10 +88,7 @@ namespace WinFormsApp1
                 {
                     tempBytes = File.ReadAllBytes(openFileDialog.FileName);
 
-                    //Get the path of specified file
                     FilePath2.Text = openFileDialog.FileName;
-
-                    //Read the contents of the file into a stream
 
                 }
             }
