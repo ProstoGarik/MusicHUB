@@ -7,5 +7,7 @@
         <Style x:Key="CustomFont">
             <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Noto Sans"/>
         </Style>
+        <BitmapImage x:Key="exitX" UriSource="Resources/UI/exitX.png"/>
+        <BitmapImage x:Key="playTrack" UriSource="Resources/UI/playTrackIcon.png"/>
     </Application.Resources>
 </Application>

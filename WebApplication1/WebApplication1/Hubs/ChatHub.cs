@@ -14,6 +14,16 @@ namespace WebApplication1.Hubs
         {
             await Clients.All.SendAsync("RecieveBytes", bytes);
         }
+
+        public async Task SendBytesCover(List<byte> bytes)
+        {
+            await Clients.All.SendAsync("RecieveBytesCover", bytes);
+        }
+
+        public async Task SendName(string name)
+        {
+            await Clients.All.SendAsync("RecieveName", name);
+        }
         //Подключение по команде: {"protocol":"json","version":1}
 
         public async Task SendMessage(string message)

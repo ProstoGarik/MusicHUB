@@ -9,8 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\UI\exitX.png" />
+    <None Remove="Resources\UI\playTrackIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MegaApiClient" Version="1.10.4" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\UI\exitX.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\playTrackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

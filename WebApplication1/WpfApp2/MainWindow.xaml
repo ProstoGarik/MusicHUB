@@ -14,22 +14,29 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Rectangle Fill="#8CBEB2"/>
-            <Button Name="exitAppButton" Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Right" Click="exitAppButton_Click"/>
+            <Button Name="exitAppButton" Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Right" Click="exitAppButton_Click" Background="#8CBEB2" BorderThickness="0">
+                <Image Source="{StaticResource exitX}" Width="30" Height="30" Stretch="Fill"/>
+            </Button>
         </Grid>
         <Grid Grid.Row="1">
             <Rectangle Fill="#F3B562"/>
-            <ListBox Name="listBox1" Height="100" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="#FFFFD193" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
-            <TextBox Name="messageTextBox" VerticalAlignment="Center" Height="40" Margin="0 0 500 0" Background="#FFFFD193" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
-            <Button Name="sendMessageButton" Width="150" Height="70" Margin="0 200 500 0" Content="Send" FontSize="16" Click="sendMessageButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
-            <Button Name="chooseFileButton" VerticalAlignment="Center" Width="100" Height="50" Margin="500 0 0 0" Content="Choose File" FontSize="16" Click="chooseFileButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
-            <TextBlock Name="filePathTextBlock" Height="50" Width="400" Margin="250 150 20 0" Text="None" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <ListBox Name="listBox1" Height="100" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFFFD193" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <Button Name="chooseFileButton" VerticalAlignment="Center" Width="100" Height="50" Margin="0" Content="Choose Audio" FontSize="14" Click="chooseFileButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <Button Name="chooseFileCoverButton" VerticalAlignment="Center" Width="100" Height="50" Margin="225 0 0 0" Content="Choose Cover" FontSize="14" Click="chooseFileCoverButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <TextBox Name="trackName" VerticalAlignment="Center" Width="200" Height="50" Margin="575,0,25,0" FontSize="14" Background="#FFFFD193" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Button Name="sendFileButton" Width="100" Height="50" Margin="0 240 60 0" Content="Send File" FontSize ="16" Click="sendFileButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Button Name="getFileButton" Width="100" Height="50" Margin="350 240 0 0" Content="Get File" FontSize ="16" Click="getFileButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Name="sendFileStateTextBlock" Width="100" Height="50" Margin="140 240 0 0" Text = "None" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Name="getFileStateTextBlock" Width="100" Height="50" Margin="550 240 0 0" Text = "None" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            
         </Grid>
         <Grid Grid.Row="2">
             <Rectangle Fill="#8CBEB2"/>
+            <TextBlock Name="trackRecievedName" Width="300" Height="25" Text="None" FontSize="16" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="0 0 300 30" Foreground="White"/>
+            <Image Name="trackRecievedCover" Width="65" Height="65" Margin="0 0 700 5"/>
+            <Button Name="playTrackButton" Width="40" Height="40" Margin="0 0 0 30" Background="#8CBEB2" BorderThickness="0" Click="playTrackButton_Click">
+                <Image Source="{StaticResource playTrack}" Width="35" Height="35" Stretch="Fill"/>
+            </Button>
         </Grid>
     </Grid>
 </Window>

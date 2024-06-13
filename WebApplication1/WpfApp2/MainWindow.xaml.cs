@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Media;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,15 +23,24 @@ namespace WpfApp2
     {
         HubConnection hubConnection;
         public byte[] tempBytes;
+        public byte[] tempBytesCover;
         public List<byte> recievedBytes;
+        public List<byte> recievedBytesCover;
+        public string recievedTrackName;
+        public MediaPlayer mediaPlayer;
+        public bool isPlaying;
         public MainWindow()
         {
             InitializeComponent();
+
             hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7196/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
             Loaded += MainWindow_Loaded;
             tempBytes = new byte[] { };
+            tempBytesCover = new byte[] { };
             recievedBytes = new List<byte>();
+            recievedBytesCover = new List<byte>();
+            mediaPlayer = new MediaPlayer();
         }
         public async Task HubConnetction_Closed(Exception? arg)
         {
@@ -65,6 +75,12 @@ namespace WpfApp2
                     listBox1.Items.Add("Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
                 }
             });
+
+            hubConnection.On<List<byte>>("RecieveBytesCover", bytes =>
+            {
+                recievedBytesCover.AddRange(bytes);
+
+            });
             try
             {
                 await hubConnection.StartAsync();
@@ -74,10 +90,11 @@ namespace WpfApp2
             {
                 listBox1.Items.Add(ex.Message);
             }
-        }
-        private void sendMessageButton_Click(object sender, RoutedEventArgs e)
-        {
-            hubConnection.InvokeAsync("SendMessage", messageTextBox.Text);
+
+            hubConnection.On<string>("RecieveName", name =>
+            {
+                recievedTrackName = name;
+            });
         }
 
         private void exitAppButton_Click(object sender, RoutedEventArgs e)
@@ -99,7 +116,16 @@ namespace WpfApp2
             if(success == true)
             {
                 tempBytes = File.ReadAllBytes(dialog.FileName);
-                filePathTextBlock.Text = dialog.FileName;
+            }
+        }
+
+        private void chooseFileCoverButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            bool? success = dialog.ShowDialog();
+            if (success == true)
+            {
+                tempBytesCover = File.ReadAllBytes(dialog.FileName);
             }
         }
 
@@ -112,13 +138,25 @@ namespace WpfApp2
                 hubConnection.InvokeAsync("SendBytes", list);
             }
 
+            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
+            foreach (List<byte> list2 in listsListCover)
+            {
+                hubConnection.InvokeAsync("SendBytesCover", list2);
+            }
+
+            hubConnection.InvokeAsync("SendName", trackName.Text);
+
             sendFileStateTextBlock.Text = "Готово";
         }
 
         private void getFileButton_Click(object sender, RoutedEventArgs e)
         {
             getFileStateTextBlock.Text = "Получаем...";
-            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
+            System.IO.File.WriteAllBytes("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
+            System.IO.File.WriteAllBytes("F:\\TempFiles\\mycover.png", recievedBytesCover.ToArray());
+            trackRecievedCover.Source = new BitmapImage(new Uri("F:\\TempFiles\\mycover.png"));
+            trackRecievedName.Text = recievedTrackName;
+            mediaPlayer.Open(new Uri("F:\\TempFiles\\mymusic.wav"));
             getFileStateTextBlock.Text = "Получено";
         }
 
@@ -129,6 +167,19 @@ namespace WpfApp2
                 .GroupBy(x => x.Index / size)
                 .Select(g => g.Select(v => v.Value).ToList())
                 .ToList();
+        }
+
+        private void playTrackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(!isPlaying)
+            {
+                mediaPlayer.Play();
+            }
+            else
+            {
+                mediaPlayer.Stop();
+            }
+            isPlaying = !isPlaying;
         }
     }
 }
