@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ClassLibrary1;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace WebApplication1.Hubs
 {
     public class ChatHub : Hub
     {
+        private TrackList trackList = new TrackList();
+
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined");

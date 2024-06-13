@@ -79,7 +79,6 @@ namespace WpfApp2
             hubConnection.On<List<byte>>("RecieveBytesCover", bytes =>
             {
                 recievedBytesCover.AddRange(bytes);
-
             });
             try
             {
@@ -131,6 +130,8 @@ namespace WpfApp2
 
         private void sendFileButton_Click(object sender, RoutedEventArgs e)
         {
+            hubConnection.InvokeAsync("SendName", trackName.Text);
+
             sendFileStateTextBlock.Text = "Отправляется...";
             List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
             foreach (List<byte> list in listsList)
@@ -144,19 +145,17 @@ namespace WpfApp2
                 hubConnection.InvokeAsync("SendBytesCover", list2);
             }
 
-            hubConnection.InvokeAsync("SendName", trackName.Text);
-
             sendFileStateTextBlock.Text = "Готово";
         }
 
         private void getFileButton_Click(object sender, RoutedEventArgs e)
         {
             getFileStateTextBlock.Text = "Получаем...";
-            System.IO.File.WriteAllBytes("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
-            System.IO.File.WriteAllBytes("F:\\TempFiles\\mycover.png", recievedBytesCover.ToArray());
-            trackRecievedCover.Source = new BitmapImage(new Uri("F:\\TempFiles\\mycover.png"));
+            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
+            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mycover.png", recievedBytesCover.ToArray());
+            trackRecievedCover.Source = new BitmapImage(new Uri("Z:\\TempFolder\\mycover.png"));
             trackRecievedName.Text = recievedTrackName;
-            mediaPlayer.Open(new Uri("F:\\TempFiles\\mymusic.wav"));
+            mediaPlayer.Open(new Uri("Z:\\TempFolder\\mymusic.wav"));
             getFileStateTextBlock.Text = "Получено";
         }
 

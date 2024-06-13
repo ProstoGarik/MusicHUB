@@ -7,8 +7,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MegaApiClient" Version="1.10.4" />
-  </ItemGroup>
-
 </Project>
