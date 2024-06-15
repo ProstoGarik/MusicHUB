@@ -64,7 +64,7 @@ namespace WpfApp2
         {
             hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
 
-            hubConnection.On<List<byte>>("RecieveBytes", bytes => {
+            hubConnection.On<List<byte>>("RecieveAudioBytes", bytes => {
                 recievedBytes.AddRange(bytes);
                 if (!listBox1.Dispatcher.CheckAccess())
                 {
@@ -76,7 +76,7 @@ namespace WpfApp2
                 }
             });
 
-            hubConnection.On<List<byte>>("RecieveBytesCover", bytes =>
+            hubConnection.On<List<byte>>("RecieveCoverBytes", bytes =>
             {
                 recievedBytesCover.AddRange(bytes);
             });
@@ -130,33 +130,39 @@ namespace WpfApp2
 
         private void sendFileButton_Click(object sender, RoutedEventArgs e)
         {
-            hubConnection.InvokeAsync("SendName", trackName.Text);
+            //sendFileStateTextBlock.Text = "Отправляется...";
+            //List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
+            //foreach (List<byte> list in listsList)
+            //{
+            //    hubConnection.InvokeAsync("SendAudioBytes", list, trackName.Text);
+            //}
 
-            sendFileStateTextBlock.Text = "Отправляется...";
-            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
-            foreach (List<byte> list in listsList)
-            {
-                hubConnection.InvokeAsync("SendBytes", list);
-            }
+            //List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
+            //foreach (List<byte> list2 in listsListCover)
+            //{
+            //    hubConnection.InvokeAsync("SendCover", list2, trackName.Text);
+            //}
 
-            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
-            foreach (List<byte> list2 in listsListCover)
-            {
-                hubConnection.InvokeAsync("SendBytesCover", list2);
-            }
-
-            sendFileStateTextBlock.Text = "Готово";
+            //sendFileStateTextBlock.Text = "Готово";
+            hubConnection.InvokeAsync("CreateTrack", trackName.Text);
         }
 
         private void getFileButton_Click(object sender, RoutedEventArgs e)
         {
-            getFileStateTextBlock.Text = "Получаем...";
-            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
-            System.IO.File.WriteAllBytes("Z:\\TempFolder\\mycover.png", recievedBytesCover.ToArray());
+            //getFileStateTextBlock.Text = "Получаем...";
+            //hubConnection.InvokeAsync("GetAudioBytes", trackName.Text);
+            //hubConnection.InvokeAsync("GetCoverBytes", trackName.Text);
+            //System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
+            //System.IO.File.WriteAllBytes("Z:\\TempFolder\\mycover.png", recievedBytesCover.ToArray());
+
+            //getFileStateTextBlock.Text = "Получено";
+            hubConnection.InvokeAsync("CheckTrack", trackName.Text);
+        }
+
+        private void showFileButton_Click(object sender, RoutedEventArgs e)
+        {
             trackRecievedCover.Source = new BitmapImage(new Uri("Z:\\TempFolder\\mycover.png"));
-            trackRecievedName.Text = recievedTrackName;
             mediaPlayer.Open(new Uri("Z:\\TempFolder\\mymusic.wav"));
-            getFileStateTextBlock.Text = "Получено";
         }
 
         public static List<List<byte>> SplitList(List<byte> source, int size)
@@ -179,6 +185,11 @@ namespace WpfApp2
                 mediaPlayer.Stop();
             }
             isPlaying = !isPlaying;
+        }
+
+        private void clearLogButton_Click(object sender, RoutedEventArgs e)
+        {
+            listBox1.Items.Clear();
         }
     }
 }

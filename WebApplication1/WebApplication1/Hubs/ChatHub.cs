@@ -7,27 +7,81 @@ namespace WebApplication1.Hubs
     public class ChatHub : Hub
     {
         private TrackList trackList = new TrackList();
-
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined");
+            await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined"); 
         }
 
-        public async Task SendBytes(List<byte> bytes)
+        public void SendAudioBytes(List<byte> bytes, string trackName)
         {
-            await Clients.All.SendAsync("RecieveBytes", bytes);
+            if(!trackList.CheckByName(trackName))
+            {
+                Clients.All.SendAsync("RecieveMessage", "Такого трека нет, создаём");
+                trackList.AddNewTrack(trackName);
+                trackList.AddBytesToExistingTrack(trackName, bytes, true);
+            }
+            else
+            {
+                Clients.All.SendAsync("RecieveMessage", "Трек с названием " + trackName + " уже существует");
+                trackList.AddBytesToExistingTrack(trackName, bytes, true);
+            }
+            Clients.All.SendAsync("RecieveMessage", "Получено " + bytes.Count() + " байт звука");
+        }
+        public void SendCoverBytes(List<byte> bytes, string trackName)
+        {
+            if (!trackList.CheckByName(trackName))
+            {
+                trackList.AddNewTrack(trackName);
+                trackList.AddBytesToExistingTrack(trackName, bytes, false);
+            }
+            else
+            {
+                trackList.AddBytesToExistingTrack(trackName, bytes, false);
+            }
+            Clients.All.SendAsync("RecieveMessage", "Получено " + bytes.Count() + " байт обложки");
+        }
+        public async Task GetAudioBytes(string trackName)
+        {
+            await Clients.All.SendAsync("RecieveMessage", "Начинаем получение по названию " + trackName);
+            if(trackList.CheckByName(trackName))
+            {
+                foreach (var byteChunk in trackList.GetSplittedAudioBytes(trackName))
+                {
+                    await Clients.All.SendAsync("RecieveMessage", "Отправлено " + byteChunk.Count + " байт звука");
+                    await Clients.Caller.SendAsync("RecieveAudioBytes", byteChunk);
+                }
+            }
+            else
+            {
+                await Clients.All.SendAsync("RecieveMessage", "Трек не найден");
+            }
+        }
+        public async Task GetCoverBytes(string trackName)
+        {
+            foreach (var byteChunk in trackList.GetSplittedCoverBytes(trackName))
+            {
+                await Clients.Caller.SendAsync("RecieveCoverBytes", byteChunk);
+                await Clients.All.SendAsync("RecieveMessage", "Отправлено " + byteChunk.Count + " байт обложки");
+            }
         }
 
-        public async Task SendBytesCover(List<byte> bytes)
+        public async Task CreateTrack(string name)
         {
-            await Clients.All.SendAsync("RecieveBytesCover", bytes);
+            trackList.AddNewTrack(name);
+            await Clients.All.SendAsync("RecieveMessage", "Создан трек " + name);
         }
 
-        public async Task SendName(string name)
+        public async Task CheckTrack(string name)
         {
-            await Clients.All.SendAsync("RecieveName", name);
+            if (trackList.CheckByName(name))
+            {
+                await Clients.All.SendAsync("RecieveMessage", "Трек с названием " + name + " уже был создан");
+            }
+            else
+            {
+                await Clients.All.SendAsync("RecieveMessage", "Трек с названием " + name + " не существует");
+            }
         }
-        //Подключение по команде: {"protocol":"json","version":1}
 
         public async Task SendMessage(string message)
         {

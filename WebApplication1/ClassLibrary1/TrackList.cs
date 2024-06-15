@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ClassLibrary1
 {
@@ -19,21 +22,46 @@ namespace ClassLibrary1
 
         public bool CheckByName(string name)
         {
-            int tempCounter = 0;
+            bool trackFound = false;
             foreach (var track in Tracks)
             {
                 if (track.TrackName == name)
                 {
-                    tempCounter++;
+                    trackFound = true;
                 }
             }
-            return tempCounter > 0;
+            return trackFound;
         }
 
         public void AddNewTrack(string name)
         {
             Tracks.Add(new Track(name));
         }
+
+        public List<List<byte>> GetSplittedAudioBytes(string name)
+        {
+            foreach (var track in Tracks)
+            {
+                if (track.TrackName == name)
+                {
+                    return track.GetSplittedAudioBytes();
+                }
+            }
+            return new List<List<byte>> { };
+        }
+
+        public List<List<byte>> GetSplittedCoverBytes(string name)
+        {
+            foreach (var track in Tracks)
+            {
+                if (track.TrackName == name)
+                {
+                    return track.GetSplittedCoverBytes();
+                }
+            }
+            return new List<List<byte>> { };
+        }
+
 
         public void AddBytesToExistingTrack(string name, List<byte> bytes, bool isAudio)
         {
@@ -57,6 +85,14 @@ namespace ClassLibrary1
                     }
                 }
             }  
+        }
+        private static List<List<byte>> SplitList(List<byte> source, int size)
+        {
+            return source
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / size)
+                .Select(g => g.Select(v => v.Value).ToList())
+                .ToList();
         }
     }
 }
