@@ -1,5 +1,6 @@
 ﻿using ClassLibrary1;
 using Microsoft.AspNetCore.SignalR;
+using System.Transactions;
 
 
 namespace WebApplication1.Hubs
@@ -68,7 +69,7 @@ namespace WebApplication1.Hubs
         public async Task CreateTrack(string name)
         {
             trackList.AddNewTrack(name);
-            await Clients.All.SendAsync("RecieveMessage", "Создан трек " + name);
+            await Clients.All.SendAsync("RecieveMessage", "Создан трек " + name + ", ID: " + trackList.TrackListId);
         }
 
         public async Task CheckTrack(string name)
@@ -79,7 +80,7 @@ namespace WebApplication1.Hubs
             }
             else
             {
-                await Clients.All.SendAsync("RecieveMessage", "Трек с названием " + name + " не существует");
+                await Clients.All.SendAsync("RecieveMessage", "Трек с названием " + name + " не существует, ID " + trackList.TrackListId);
             }
         }
 

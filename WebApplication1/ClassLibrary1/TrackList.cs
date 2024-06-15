@@ -12,13 +12,15 @@ namespace ClassLibrary1
     public class TrackList
     {
         private List<Track> tracks;
+        private int trackListId;
 
         public TrackList()
         {
             Tracks = new List<Track>();
+            TrackListId = new Random().Next(0,100);
         }
         public List<Track> Tracks { get => tracks; set => tracks = value; }
-
+        public int TrackListId { get => trackListId; set => trackListId = value; }
 
         public bool CheckByName(string name)
         {
