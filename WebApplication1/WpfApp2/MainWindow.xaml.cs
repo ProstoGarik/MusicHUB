@@ -66,14 +66,14 @@ namespace WpfApp2
 
             hubConnection.On<List<byte>>("RecieveAudioBytes", bytes => {
                 recievedBytes.AddRange(bytes);
-                if (!listBox1.Dispatcher.CheckAccess())
-                {
-                    listBox1.Dispatcher.Invoke(new Action<string>(UpdateListBox), "Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
-                }
-                else
-                {
-                    listBox1.Items.Add("Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
-                }
+                //if (!listBox1.Dispatcher.CheckAccess())
+                //{
+                //    listBox1.Dispatcher.Invoke(new Action<string>(UpdateListBox), "Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
+                //}
+                //else
+                //{
+                //    listBox1.Items.Add("Получено " + bytes.Count() + " байт. Всего " + recievedBytes.Count() + " байт");
+                //}
             });
 
             hubConnection.On<List<byte>>("RecieveCoverBytes", bytes =>
