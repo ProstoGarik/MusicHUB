@@ -7,10 +7,16 @@ namespace WebApplication1.Hubs
 {
     public class ChatHub : Hub
     {
+        private FileManager fileManager = new FileManager();
         private TrackList trackList = new TrackList();
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined"); 
+        }
+
+        private void Load()
+        {
+            trackList = fileManager.LoadFile();
         }
 
         public void SendAudioBytes(List<byte> bytes, string trackName)
@@ -20,6 +26,7 @@ namespace WebApplication1.Hubs
                 Clients.All.SendAsync("RecieveMessage", "Такого трека нет, создаём");
                 trackList.AddNewTrack(trackName);
                 trackList.AddBytesToExistingTrack(trackName, bytes, true);
+                
             }
             else
             {
@@ -68,12 +75,15 @@ namespace WebApplication1.Hubs
 
         public async Task CreateTrack(string name)
         {
+            Load();
             trackList.AddNewTrack(name);
             await Clients.All.SendAsync("RecieveMessage", "Создан трек " + name + ", ID: " + trackList.TrackListId);
+            fileManager.SaveFile(trackList);
         }
 
         public async Task CheckTrack(string name)
         {
+            Load();
             if (trackList.CheckByName(name))
             {
                 await Clients.All.SendAsync("RecieveMessage", "Трек с названием " + name + " уже был создан");

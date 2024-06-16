@@ -5,6 +5,13 @@ namespace ClassLibrary1
         private string trackName;
         private List<byte> trackCoverBytes;
         private List<byte> trackAudioBytes;
+
+        public Track()
+        {
+            trackName = string.Empty;
+            trackCoverBytes = new List<byte>();
+            trackAudioBytes = new List<byte>();
+        }
         public Track(string trackName)
         {
             TrackName = trackName;
