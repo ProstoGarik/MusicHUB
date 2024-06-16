@@ -1,36 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace ClassLibrary1
 {
     public  class FileManager
     {
-        private XmlSerializer serializer;
 
         public FileManager() {
             TrackList trackList = new TrackList();
-            Serializer = new System.Xml.Serialization.XmlSerializer(trackList.GetType());
         }
-        public XmlSerializer Serializer { get => serializer; set => serializer = value; }
 
         public void SaveFile(TrackList trackList)
         {
-            using (StreamWriter streamWriter = new StreamWriter("Z:\\TempFolder\\TestXml.xml"))
-            {
-                Serializer.Serialize(streamWriter, trackList);
-            }
+            string jsonString = JsonSerializer.Serialize(trackList);
+            File.WriteAllText("F:\\TempFiles\\tracklist.json", jsonString);
         }
 
         public TrackList LoadFile()
         {
-            using (StreamReader streamReader = new StreamReader("Z:\\TempFolder\\TestXml.xml"))
+            try
             {
-                return (TrackList)serializer.Deserialize(streamReader);
+                using (StreamReader r = new StreamReader("F:\\TempFiles\\tracklist.json"))
+                {
+                    string jsonFile = r.ReadToEnd();
+                    return JsonSerializer.Deserialize<TrackList>(jsonFile);
+                }
             }
+            catch
+            {
+                return new TrackList();
+            }
+            
         }
     }
 }

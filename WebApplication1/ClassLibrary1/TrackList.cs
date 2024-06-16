@@ -88,6 +88,33 @@ namespace ClassLibrary1
                 }
             }  
         }
+
+        public int GetTrackByteCount(string trackName, bool isAudio)
+        {
+            if (isAudio)
+            {
+                foreach (var track in Tracks)
+                {
+                    if (track.TrackName == trackName)
+                    {
+                        return track.TrackAudioBytes.Count;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var track in Tracks)
+                {
+                    if (track.TrackName == trackName)
+                    {
+                        return track.TrackCoverBytes.Count;
+                    }
+                }
+            }
+            
+            return 0;
+        }
+
         private static List<List<byte>> SplitList(List<byte> source, int size)
         {
             return source

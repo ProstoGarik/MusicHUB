@@ -90,9 +90,36 @@ namespace WpfApp2
                 listBox1.Items.Add(ex.Message);
             }
 
+
             hubConnection.On<string>("RecieveName", name =>
             {
                 recievedTrackName = name;
+            });
+
+            hubConnection.On<int>("RecievingAudioDone", byteCount =>
+            {
+                if (byteCount == recievedBytes.Count)
+                {
+                    System.IO.File.WriteAllBytesAsync("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
+                    Dispatcher.Invoke(() =>
+                    {
+                        mediaPlayer.Open(new Uri("F:\\TempFiles\\mymusic.wav"));
+                        trackRecievedName.Text = recievedTrackName;
+                    });     
+                }
+            });
+
+            hubConnection.On<int>("RecievingCoverDone", byteCount =>
+            {
+                if (byteCount == recievedBytesCover.Count)
+                {
+                    System.IO.File.WriteAllBytesAsync("F:\\TempFiles\\mycover.png", recievedBytesCover.ToArray());
+                    Dispatcher.Invoke(() =>
+                    {
+                        trackRecievedCover.Source = new BitmapImage(new Uri("F:\\TempFiles\\mycover.png"));
+                    });
+                    
+                }    
             });
         }
 
@@ -130,39 +157,38 @@ namespace WpfApp2
 
         private void sendFileButton_Click(object sender, RoutedEventArgs e)
         {
-            //sendFileStateTextBlock.Text = "Отправляется...";
-            //List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
-            //foreach (List<byte> list in listsList)
-            //{
-            //    hubConnection.InvokeAsync("SendAudioBytes", list, trackName.Text);
-            //}
+            sendFileStateTextBlock.Text = "Отправляется...";
+            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
+            foreach (List<byte> list in listsList)
+            {
+                hubConnection.InvokeAsync("SendAudioBytes", list, trackName.Text);
+            }
 
-            //List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
-            //foreach (List<byte> list2 in listsListCover)
-            //{
-            //    hubConnection.InvokeAsync("SendCover", list2, trackName.Text);
-            //}
+            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
+            foreach (List<byte> list2 in listsListCover)
+            {
+                hubConnection.InvokeAsync("SendCoverBytes", list2, trackName.Text);
+            }
 
-            //sendFileStateTextBlock.Text = "Готово";
+            sendFileStateTextBlock.Text = "Готово";
             hubConnection.InvokeAsync("CreateTrack", trackName.Text);
         }
 
         private void getFileButton_Click(object sender, RoutedEventArgs e)
         {
-            //getFileStateTextBlock.Text = "Получаем...";
-            //hubConnection.InvokeAsync("GetAudioBytes", trackName.Text);
-            //hubConnection.InvokeAsync("GetCoverBytes", trackName.Text);
-            //System.IO.File.WriteAllBytes("Z:\\TempFolder\\mymusic.wav", recievedBytes.ToArray());
-            //System.IO.File.WriteAllBytes("Z:\\TempFolder\\mycover.png", recievedBytesCover.ToArray());
+            recievedBytes = new List<byte> { };
+            getFileStateTextBlock.Text = "Получаем...";
+            recievedTrackName = trackName.Text;
+            hubConnection.InvokeAsync("GetAudioBytes", trackName.Text);
+            hubConnection.InvokeAsync("GetCoverBytes", trackName.Text);
+            
 
-            //getFileStateTextBlock.Text = "Получено";
-            hubConnection.InvokeAsync("CheckTrack", trackName.Text);
+            getFileStateTextBlock.Text = "Получено";
         }
 
         private void showFileButton_Click(object sender, RoutedEventArgs e)
         {
-            trackRecievedCover.Source = new BitmapImage(new Uri("Z:\\TempFolder\\mycover.png"));
-            mediaPlayer.Open(new Uri("Z:\\TempFolder\\mymusic.wav"));
+            
         }
 
         public static List<List<byte>> SplitList(List<byte> source, int size)
