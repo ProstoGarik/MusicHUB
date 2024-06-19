@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\UI\arrowRightIcon.png" />
     <None Remove="Resources\UI\exitX.png" />
     <None Remove="Resources\UI\playTrackIcon.png" />
   </ItemGroup>
@@ -19,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\UI\arrowRightIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\UI\exitX.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

@@ -30,7 +30,9 @@
             <Button Name="showFileButton" Width="100" Height="50" Margin="650 240 0 0" Content="Get File" FontSize ="16" Click="showFileButton_Click" Background="#8CBEB2" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Name="sendFileStateTextBlock" Width="100" Height="50" Margin="140 240 0 0" Text = "None" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Name="getFileStateTextBlock" Width="100" Height="50" Margin="550 240 0 0" Text = "None" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
-            
+            <Image Name="displayCoverImage1" Width="100" Height="100" Margin="0 0 650 0"/>
+            <Image Name="displayCoverImage2" Width="100" Height="100" Margin="0 0 350 0"/>
+            <Image Source="{StaticResource moveRight}" Width="40" Height="40" Margin="0 0 155 0" Stretch="Fill"/>
         </Grid>
         <Grid Grid.Row="2">
             <Rectangle Fill="#8CBEB2"/>

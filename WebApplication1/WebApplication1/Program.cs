@@ -7,8 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSignalR();
-
+builder.Services.AddSignalR(configure => { configure.MaximumReceiveMessageSize = null; });
 
 var app  = builder.Build();
 

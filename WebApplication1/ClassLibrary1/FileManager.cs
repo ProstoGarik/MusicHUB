@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Text.Json;
+using ZeroFormatter;
 
 namespace ClassLibrary1
 {
+    
     public  class FileManager
     {
-
+        private string tempFolderPath = "Z:\\TempFolder";
         public FileManager() {
             TrackList trackList = new TrackList();
         }
@@ -19,14 +21,14 @@ namespace ClassLibrary1
         public void SaveFile(TrackList trackList)
         {
             string jsonString = JsonSerializer.Serialize(trackList);
-            File.WriteAllText("F:\\TempFiles\\tracklist.json", jsonString);
+            File.WriteAllText(tempFolderPath + "\\tracklist.json", jsonString);
         }
 
         public TrackList LoadFile()
         {
             try
             {
-                using (StreamReader r = new StreamReader("F:\\TempFiles\\tracklist.json"))
+                using (StreamReader r = new StreamReader(tempFolderPath + "\\tracklist.json"))
                 {
                     string jsonFile = r.ReadToEnd();
                     return JsonSerializer.Deserialize<TrackList>(jsonFile);

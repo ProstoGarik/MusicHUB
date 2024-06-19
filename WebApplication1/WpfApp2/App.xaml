@@ -9,5 +9,6 @@
         </Style>
         <BitmapImage x:Key="exitX" UriSource="Resources/UI/exitX.png"/>
         <BitmapImage x:Key="playTrack" UriSource="Resources/UI/playTrackIcon.png"/>
+        <BitmapImage x:Key="moveRight" UriSource="Resources/UI/arrowRightIcon.png"/>
     </Application.Resources>
 </Application>

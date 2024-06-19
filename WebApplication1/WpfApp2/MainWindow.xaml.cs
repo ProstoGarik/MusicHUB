@@ -26,9 +26,11 @@ namespace WpfApp2
         public byte[] tempBytesCover;
         public List<byte> recievedBytes;
         public List<byte> recievedBytesCover;
-        public string recievedTrackName;
+        public List<byte> recievedBytesDisplayCover;
         public MediaPlayer mediaPlayer;
         public bool isPlaying;
+        int displayStartIndex = 0;
+        private string TempFolderPath = "Z:\\TempFolder";
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +42,7 @@ namespace WpfApp2
             tempBytesCover = new byte[] { };
             recievedBytes = new List<byte>();
             recievedBytesCover = new List<byte>();
+            recievedBytesDisplayCover = new List<byte>();
             mediaPlayer = new MediaPlayer();
         }
         public async Task HubConnetction_Closed(Exception? arg)
@@ -90,21 +93,15 @@ namespace WpfApp2
                 listBox1.Items.Add(ex.Message);
             }
 
-
-            hubConnection.On<string>("RecieveName", name =>
-            {
-                recievedTrackName = name;
-            });
-
             hubConnection.On<int>("RecievingAudioDone", byteCount =>
             {
                 if (byteCount == recievedBytes.Count)
                 {
-                    System.IO.File.WriteAllBytesAsync("F:\\TempFiles\\mymusic.wav", recievedBytes.ToArray());
+                    System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\mymusic.wav", recievedBytes.ToArray());
                     Dispatcher.Invoke(() =>
                     {
-                        mediaPlayer.Open(new Uri("F:\\TempFiles\\mymusic.wav"));
-                        trackRecievedName.Text = recievedTrackName;
+                        mediaPlayer.Open(new Uri(TempFolderPath + "\\mymusic.wav"));
+                        trackRecievedName.Text = trackName.Text;
                     });     
                 }
             });
@@ -113,14 +110,48 @@ namespace WpfApp2
             {
                 if (byteCount == recievedBytesCover.Count)
                 {
-                    System.IO.File.WriteAllBytesAsync("F:\\TempFiles\\mycover.png", recievedBytesCover.ToArray());
+                    System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\mycover.png", recievedBytesCover.ToArray());
                     Dispatcher.Invoke(() =>
                     {
-                        trackRecievedCover.Source = new BitmapImage(new Uri("F:\\TempFiles\\mycover.png"));
+                        trackRecievedCover.Source = new BitmapImage(new Uri(TempFolderPath + "\\mycover.png"));
                     });
                     
                 }    
             });
+
+            hubConnection.On<List<byte>>("RecieveDisplayCoverBytes", bytes =>
+            {
+                recievedBytesDisplayCover.AddRange(bytes);
+            });
+
+            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", (count, index) =>
+            {
+                if (count == recievedBytesDisplayCover.Count)
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display1.png", recievedBytesDisplayCover.ToArray());
+                            Dispatcher.Invoke(() =>
+                            {
+                                displayCoverImage1.Source = new BitmapImage(new Uri(TempFolderPath + "\\display1.png"));
+                            });
+                            break;
+                        case 1:
+                            System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display2.png", recievedBytesDisplayCover.ToArray());
+                            Dispatcher.Invoke(() =>
+                            {
+                                displayCoverImage2.Source = new BitmapImage(new Uri(TempFolderPath + "\\display2.png"));
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+            });
+
+            await hubConnection.InvokeAsync("GetCoverForDisplay", displayStartIndex);
         }
 
         private void exitAppButton_Click(object sender, RoutedEventArgs e)
@@ -158,13 +189,13 @@ namespace WpfApp2
         private void sendFileButton_Click(object sender, RoutedEventArgs e)
         {
             sendFileStateTextBlock.Text = "Отправляется...";
-            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 5000);
+            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 1000000);
             foreach (List<byte> list in listsList)
             {
                 hubConnection.InvokeAsync("SendAudioBytes", list, trackName.Text);
             }
 
-            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 5000);
+            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 1000000);
             foreach (List<byte> list2 in listsListCover)
             {
                 hubConnection.InvokeAsync("SendCoverBytes", list2, trackName.Text);
@@ -176,9 +207,13 @@ namespace WpfApp2
 
         private void getFileButton_Click(object sender, RoutedEventArgs e)
         {
+            mediaPlayer.Stop();
+            mediaPlayer.Close();
             recievedBytes = new List<byte> { };
+            recievedBytesCover = new List<byte> { };
+            
+
             getFileStateTextBlock.Text = "Получаем...";
-            recievedTrackName = trackName.Text;
             hubConnection.InvokeAsync("GetAudioBytes", trackName.Text);
             hubConnection.InvokeAsync("GetCoverBytes", trackName.Text);
             

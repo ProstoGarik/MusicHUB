@@ -27,12 +27,12 @@ namespace ClassLibrary1
 
         public List<List<byte>> GetSplittedAudioBytes()
         {
-            return SplitList(TrackAudioBytes, 5000);
+            return SplitList(TrackAudioBytes, 1000000);
         }
 
         public List<List<byte>> GetSplittedCoverBytes()
         {
-            return SplitList(TrackCoverBytes, 5000);
+            return SplitList(TrackCoverBytes, 1000000);
         }
 
         private static List<List<byte>> SplitList(List<byte> source, int size)

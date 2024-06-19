@@ -6,9 +6,11 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ZeroFormatter;
 
 namespace ClassLibrary1
 {
+    [ZeroFormattable]
     public class TrackList
     {
         private List<Track> tracks;
@@ -115,6 +117,15 @@ namespace ClassLibrary1
             return 0;
         }
 
+        public List<List<byte>> GetSplittedDisplayCoverBytes(int startingIndex, int currentIndex)
+        {
+            return Tracks[currentIndex + startingIndex].GetSplittedCoverBytes();
+        }
+        
+        public Track GetTrackByIndex(int index)
+        {
+            return Tracks[index];
+        }
         private static List<List<byte>> SplitList(List<byte> source, int size)
         {
             return source

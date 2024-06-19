@@ -94,6 +94,21 @@ namespace WebApplication1.Hubs
                 await Clients.All.SendAsync("RecieveMessage", "Трек не найден");
             }
         }
+        public async Task GetCoverForDisplay(int startIndex)
+        {
+            Load();
+            await Clients.All.SendAsync("RecieveMessage", "Начинаем получение обложки для отображения...");
+            for (int i = 0; i < 2; i++)
+            {
+                int byteCount = trackList.GetTrackByIndex(i).TrackCoverBytes.Count;
+                foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(startIndex, i))
+                {
+                    await Clients.All.SendAsync("RecieveDisplayCoverBytes",byteChunk);
+                    await Clients.All.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
+                }
+                
+            }
+        }
 
         public async Task SendMessage(string message)
         {
