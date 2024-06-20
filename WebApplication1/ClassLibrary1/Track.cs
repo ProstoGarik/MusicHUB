@@ -3,26 +3,18 @@ namespace ClassLibrary1
     public class Track
     {
         private string trackName;
+        private string trackArtist;
+        private DateTime trackAdded;
         private List<byte> trackCoverBytes;
         private List<byte> trackAudioBytes;
 
-        public Track()
-        {
-            trackName = string.Empty;
-            trackCoverBytes = new List<byte>();
-            trackAudioBytes = new List<byte>();
-        }
-        public Track(string trackName)
+        public Track(string trackName, string trackArtist)
         {
             TrackName = trackName;
+            TrackArtist = trackArtist;
             TrackCoverBytes = new List<byte>();
             TrackAudioBytes = new List<byte>();
-        }
-        public Track(string trackName, List<byte> trackCoverBytes, List<byte> trackAudioBytes)
-        {
-            TrackName = trackName;
-            TrackCoverBytes = trackCoverBytes;
-            TrackAudioBytes = trackAudioBytes;
+            TrackAdded = DateTime.Now;
         }
 
         public List<List<byte>> GetSplittedAudioBytes()
@@ -46,6 +38,8 @@ namespace ClassLibrary1
         public string TrackName { get => trackName; set => trackName = value; }
         public List<byte> TrackCoverBytes { get => trackCoverBytes; set => trackCoverBytes = value; }
         public List<byte> TrackAudioBytes { get => trackAudioBytes; set => trackAudioBytes = value; }
+        public string TrackArtist { get => trackArtist; set => trackArtist = value; }
+        public DateTime TrackAdded { get => trackAdded; set => trackAdded = value; }
     }
 
 }

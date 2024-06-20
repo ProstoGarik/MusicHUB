@@ -6,14 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Text.Json;
-using ZeroFormatter;
 
 namespace ClassLibrary1
 {
     
     public  class FileManager
     {
-        private string tempFolderPath = "Z:\\TempFolder";
+        private string tempFolderPath = "F:\\TempFiles";
         public FileManager() {
             TrackList trackList = new TrackList();
         }

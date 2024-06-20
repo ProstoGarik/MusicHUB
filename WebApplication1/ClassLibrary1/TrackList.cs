@@ -6,11 +6,9 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using ZeroFormatter;
 
 namespace ClassLibrary1
 {
-    [ZeroFormattable]
     public class TrackList
     {
         private List<Track> tracks;
@@ -37,9 +35,9 @@ namespace ClassLibrary1
             return trackFound;
         }
 
-        public void AddNewTrack(string name)
+        public void AddNewTrack(string name, string artist)
         {
-            Tracks.Add(new Track(name));
+            Tracks.Add(new Track(name, artist));
         }
 
         public List<List<byte>> GetSplittedAudioBytes(string name)
@@ -121,7 +119,17 @@ namespace ClassLibrary1
         {
             return Tracks[currentIndex + startingIndex].GetSplittedCoverBytes();
         }
-        
+
+        public string GetDisplayName(int startingIndex, int currentIndex)
+        {
+            return Tracks[currentIndex + startingIndex].TrackName;
+        }
+
+        public string GetDisplayArtist(int startingIndex, int currentIndex)
+        {
+            return Tracks[currentIndex + startingIndex].TrackArtist;
+        }
+
         public Track GetTrackByIndex(int index)
         {
             return Tracks[index];

@@ -9,10 +9,6 @@ namespace WebApplication1.Hubs
     {
         private FileManager fileManager = new FileManager();
         private TrackList trackList = new TrackList();
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId+" Joined"); 
-        }
 
         private void Load()
         {
@@ -23,30 +19,27 @@ namespace WebApplication1.Hubs
             fileManager.SaveFile(trackList);
         }
 
-        public void SendAudioBytes(List<byte> bytes, string trackName)
+        public void SendAudioBytes(List<byte> bytes, string trackName, string trackArtist)
         {
             Load();
             if(!trackList.CheckByName(trackName))
             {
-                Clients.All.SendAsync("RecieveMessage", "Такого трека нет, создаём");
-                trackList.AddNewTrack(trackName);
+                trackList.AddNewTrack(trackName, trackArtist);
                 trackList.AddBytesToExistingTrack(trackName, bytes, true);
                 
             }
             else
             {
-                Clients.All.SendAsync("RecieveMessage", "Трек с названием " + trackName + " уже существует");
                 trackList.AddBytesToExistingTrack(trackName, bytes, true);
             }
-            Clients.All.SendAsync("RecieveMessage", "Получено " + bytes.Count() + " байт звука");
             Save();
         }
-        public void SendCoverBytes(List<byte> bytes, string trackName)
+        public void SendCoverBytes(List<byte> bytes, string trackName, string trackArtist)
         {
             Load();
             if (!trackList.CheckByName(trackName))
             {
-                trackList.AddNewTrack(trackName);
+                trackList.AddNewTrack(trackName, trackArtist);
                 trackList.AddBytesToExistingTrack(trackName, bytes, false);
 
             }
@@ -59,45 +52,20 @@ namespace WebApplication1.Hubs
         public async Task GetAudioBytes(string trackName)
         {
             Load();
-            await Clients.All.SendAsync("RecieveMessage", "Начинаем получение аудио по названию..." + trackName);
             if(trackList.CheckByName(trackName))
             {
-                await Clients.All.SendAsync("RecieveMessage", "Трек найден, загружаем аудио...");
                 foreach (var byteChunk in trackList.GetSplittedAudioBytes(trackName))
                 {     
                     await Clients.All.SendAsync("RecieveAudioBytes", byteChunk);
                     await Clients.All.SendAsync("RecievingAudioDone", trackList.GetTrackByteCount(trackName, true));
                 }
-                await Clients.All.SendAsync("RecieveMessage", "Звук загружен");
             }
             else
-            {
-                await Clients.All.SendAsync("RecieveMessage", "Трек не найден");
-            }
-        }
-        public async Task GetCoverBytes(string trackName)
-        {
-            Load();
-            await Clients.All.SendAsync("RecieveMessage", "Начинаем получение обложки по названию..." + trackName);
-            if (trackList.CheckByName(trackName))
-            {
-                await Clients.All.SendAsync("RecieveMessage", "Трек найден, загружаем обложку...");
-                foreach (var byteChunk in trackList.GetSplittedCoverBytes(trackName))
-                {
-                    await Clients.All.SendAsync("RecieveCoverBytes", byteChunk);
-                    await Clients.All.SendAsync("RecievingCoverDone", trackList.GetTrackByteCount(trackName, false));
-                }
-                await Clients.All.SendAsync("RecieveMessage", "Обложка загружена");
-            }
-            else
-            {
-                await Clients.All.SendAsync("RecieveMessage", "Трек не найден");
-            }
+            {}
         }
         public async Task GetCoverForDisplay(int startIndex)
         {
             Load();
-            await Clients.All.SendAsync("RecieveMessage", "Начинаем получение обложки для отображения...");
             for (int i = 0; i < trackList.CheckForTrackCount(); i++)
             {
                 int byteCount = trackList.GetTrackByIndex(i).TrackCoverBytes.Count;
@@ -105,16 +73,26 @@ namespace WebApplication1.Hubs
                 {
                     await Clients.All.SendAsync("RecieveDisplayCoverBytes",byteChunk);
                     await Clients.All.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
-                }
-                
+                }     
             }
         }
 
-        public async Task SendMessage(string message)
+        public async Task GetNamesForDisplay(int startIndex)
         {
-            await Clients.All.SendAsync("RecieveMessage", Context.ConnectionId + " Says: " + message);
+            Load();
+            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
+            {
+                await Clients.All.SendAsync("RecieveDisplayName", trackList.GetDisplayName(startIndex, i), i);
+            }
         }
 
-        //Тест сообщения: {"arguments":["Hello!"],"target":"SendMessage","type":1}
+        public async Task GetArtistsForDisplay(int startIndex)
+        {
+            Load();
+            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
+            {
+                await Clients.All.SendAsync("RecieveDisplayArtist", trackList.GetDisplayArtist(startIndex, i), i);
+            }
+        }
     }
 }
