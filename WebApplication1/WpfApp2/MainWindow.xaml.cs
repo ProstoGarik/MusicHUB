@@ -47,25 +47,25 @@ namespace WpfApp2
         }
         public async Task HubConnetction_Closed(Exception? arg)
         {
-            listBox1.Items.Add("Соединение разорвано, переподключение...");
+            //listBox1.Items.Add("Соединение разорвано, переподключение...");
             await Task.Delay(new Random().Next(0, 5) * 1000);
             await hubConnection.StartAsync();
         }
-        private void UpdateListBox(string message)
-        {
-            if (!listBox1.Dispatcher.CheckAccess())
-            {
-                listBox1.Dispatcher.Invoke(new Action<string>(UpdateListBox), message);
-            }
-            else
-            {
-                listBox1.Items.Add(message);
-            }
-        }
+        //private void UpdateListBox(string message)
+        //{
+        //    if (!listBox1.Dispatcher.CheckAccess())
+        //    {
+        //        listBox1.Dispatcher.Invoke(new Action<string>(UpdateListBox), message);
+        //    }
+        //    else
+        //    {
+        //        listBox1.Items.Add(message);
+        //    }
+        //}
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
+            //hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
 
             hubConnection.On<List<byte>>("RecieveAudioBytes", bytes => {
                 recievedBytes.AddRange(bytes);
@@ -90,7 +90,7 @@ namespace WpfApp2
             }
             catch (Exception ex)
             {
-                listBox1.Items.Add(ex.Message);
+                //listBox1.Items.Add(ex.Message);
             }
 
             hubConnection.On<int>("RecievingAudioDone", byteCount =>
@@ -132,23 +132,71 @@ namespace WpfApp2
                     {
                         case 0:
                             System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display1.png", recievedBytesDisplayCover.ToArray());
-                            Dispatcher.Invoke(() =>
+                            try
                             {
-                                displayCoverImage1.Source = new BitmapImage(new Uri(TempFolderPath + "\\display1.png"));
-                            });
+                                Dispatcher.Invoke(() =>
+                                {
+                                    displayCoverImage0.Source = new BitmapImage(new Uri(TempFolderPath + "\\display1.png"));
+                                });
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
                             break;
                         case 1:
                             System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display2.png", recievedBytesDisplayCover.ToArray());
-                            Dispatcher.Invoke(() =>
+                            try
                             {
-                                displayCoverImage2.Source = new BitmapImage(new Uri(TempFolderPath + "\\display2.png"));
-                            });
+                                Dispatcher.Invoke(() =>
+                                {
+                                    displayCoverImage1.Source = new BitmapImage(new Uri(TempFolderPath + "\\display2.png"));
+                                });
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                            
+                            break;
+                        case 2:
+                            System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display3.png", recievedBytesDisplayCover.ToArray());
+                            try
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    displayCoverImage2.Source = new BitmapImage(new Uri(TempFolderPath + "\\display3.png"));
+                                });
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                            
+                            break;
+                        case 3:
+                            System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\display4.png", recievedBytesDisplayCover.ToArray());
+                            try
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    displayCoverImage3.Source = new BitmapImage(new Uri(TempFolderPath + "\\display4.png"));
+                                });
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                            
                             break;
                         default:
                             break;
                     }
-                }
-                
+                }            
             });
 
             await hubConnection.InvokeAsync("GetCoverForDisplay", displayStartIndex);
@@ -188,7 +236,6 @@ namespace WpfApp2
 
         private void sendFileButton_Click(object sender, RoutedEventArgs e)
         {
-            sendFileStateTextBlock.Text = "Отправляется...";
             List<List<byte>> listsList = SplitList(tempBytes.ToList(), 1000000);
             foreach (List<byte> list in listsList)
             {
@@ -201,7 +248,6 @@ namespace WpfApp2
                 hubConnection.InvokeAsync("SendCoverBytes", list2, trackName.Text);
             }
 
-            sendFileStateTextBlock.Text = "Готово";
             hubConnection.InvokeAsync("CreateTrack", trackName.Text);
         }
 
@@ -213,12 +259,10 @@ namespace WpfApp2
             recievedBytesCover = new List<byte> { };
             
 
-            getFileStateTextBlock.Text = "Получаем...";
             hubConnection.InvokeAsync("GetAudioBytes", trackName.Text);
             hubConnection.InvokeAsync("GetCoverBytes", trackName.Text);
             
 
-            getFileStateTextBlock.Text = "Получено";
         }
 
         private void showFileButton_Click(object sender, RoutedEventArgs e)
@@ -248,9 +292,5 @@ namespace WpfApp2
             isPlaying = !isPlaying;
         }
 
-        private void clearLogButton_Click(object sender, RoutedEventArgs e)
-        {
-            listBox1.Items.Clear();
-        }
     }
 }

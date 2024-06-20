@@ -98,7 +98,7 @@ namespace WebApplication1.Hubs
         {
             Load();
             await Clients.All.SendAsync("RecieveMessage", "Начинаем получение обложки для отображения...");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
             {
                 int byteCount = trackList.GetTrackByIndex(i).TrackCoverBytes.Count;
                 foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(startIndex, i))
