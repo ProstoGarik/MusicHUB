@@ -2,6 +2,7 @@
 using System.Media;
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -10,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Win32;
@@ -29,7 +31,10 @@ namespace WpfApp2
         public MediaPlayer mediaPlayer;
         public bool isPlaying;
         int displayStartIndex = 0;
-        private string TempFolderPath = "F:\\TempFiles";
+        private string TempFolderPath = "..\\..\\..\\RunningTemp\\";
+        private Uri TempAudioUri;
+        DispatcherTimer timer;
+        private bool timerPaused = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -42,7 +47,17 @@ namespace WpfApp2
             recievedBytesDisplayCover = new List<byte>();
             tempBytesCover = new byte[] { };
             mediaPlayer = new MediaPlayer();
+            mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+
+            TempAudioUri = new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\mymusic.wav"));
         }
+
+        private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
+        {
+            trackFullLengthTextBlock.Text = mediaPlayer.NaturalDuration.TimeSpan.Minutes.ToString() + ":" + mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString();
+            trackPositionSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+        }
+
         public async Task HubConnetction_Closed(Exception? arg)
         {
             //listBox1.Items.Add("Соединение разорвано, переподключение...");
@@ -63,6 +78,7 @@ namespace WpfApp2
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            
             //hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
 
             hubConnection.On<List<byte>>("RecieveAudioBytes", bytes => {
@@ -87,15 +103,15 @@ namespace WpfApp2
                 //listBox1.Items.Add(ex.Message);
             }
 
-            hubConnection.On<int>("RecievingAudioDone", byteCount =>
+            hubConnection.On<int>("RecievingAudioDone", async byteCount =>
             {
                 if (byteCount == recievedBytes.Count)
                 {
-                    System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\mymusic.wav", recievedBytes.ToArray());
+                    await System.IO.File.WriteAllBytesAsync(TempFolderPath + "\\mymusic.wav", recievedBytes.ToArray());
                     Dispatcher.Invoke(() =>
                     {
-                        mediaPlayer.Open(new Uri(TempFolderPath + "\\mymusic.wav"));
-                    });     
+                        mediaPlayer.Open(TempAudioUri);   
+                    });
                 }
             });
 
@@ -117,7 +133,7 @@ namespace WpfApp2
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    displayCoverImage0.Source = new BitmapImage(new Uri(TempFolderPath + "\\display1.png"));
+                                    displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
                                 });
                                 recievedBytesDisplayCover = new List<byte>();
                             }
@@ -132,7 +148,7 @@ namespace WpfApp2
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    displayCoverImage1.Source = new BitmapImage(new Uri(TempFolderPath + "\\display2.png"));
+                                    displayCoverImage1.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display2.png")));
                                 });
                                 recievedBytesDisplayCover = new List<byte>();
                             }
@@ -148,7 +164,7 @@ namespace WpfApp2
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    displayCoverImage2.Source = new BitmapImage(new Uri(TempFolderPath + "\\display3.png"));
+                                    displayCoverImage2.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display3.png")));
                                 });
                                 recievedBytesDisplayCover = new List<byte>();
                             }
@@ -165,7 +181,7 @@ namespace WpfApp2
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    displayCoverImage3.Source = new BitmapImage(new Uri(TempFolderPath + "\\display4.png"));
+                                    displayCoverImage3.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display4.png")));
                                 });
                                 recievedBytesDisplayCover = new List<byte>();
                             }
@@ -248,11 +264,45 @@ namespace WpfApp2
                 }
             });
 
+            hubConnection.On<DateTime, int>("RecieveDisplayDate", (date, index) =>
+            {
+                string minute = date.Minute < 10 ? "0" + date.Minute.ToString() : date.Minute.ToString();
+                switch (index)
+                {
+                    case 0:
+                        Dispatcher.Invoke(() =>
+                        {       
+                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                        });
+                        break;
+                    case 1:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                        });
+                        break;
+                    case 2:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                        });
+                        break;
+                    case 3:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            });
+
             await hubConnection.InvokeAsync("GetCoverForDisplay", displayStartIndex);
             await hubConnection.InvokeAsync("GetNamesForDisplay", displayStartIndex);
             await hubConnection.InvokeAsync("GetArtistsForDisplay", displayStartIndex);
+            await hubConnection.InvokeAsync("GetDatesForDisplay", displayStartIndex);
         }
-
         private async Task ApplyDisplayCover(int displayNumber)
         {
             switch(displayNumber)
@@ -338,15 +388,47 @@ namespace WpfApp2
         }
         private void playTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            if(!isPlaying)
+            if (!isPlaying)
             {
+                playTrackImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\pauseTrackIcon.png")));
+                if (timer == null)
+                {
+                    timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromSeconds(1);
+                    timer.Tick += Timer_Tick;
+                }
+                timer.Start();
                 mediaPlayer.Play();
             }
             else
             {
-                mediaPlayer.Stop();
+                playTrackImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\playTrackIcon.png")));
+                mediaPlayer.Pause();
             }
             isPlaying = !isPlaying;
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            if(!timerPaused)
+            {
+                TimeSpan currentTime = mediaPlayer.Position;
+                if (currentTime.TotalSeconds <= 0)
+                {
+                    timer.Stop();
+                    currentTime = TimeSpan.Zero;
+                }
+                if (currentTime.Seconds < 10)
+                {
+                    trackCurrentLengthTextBlock.Text = currentTime.Minutes.ToString() + ":0" + currentTime.Seconds.ToString();
+                }
+                else
+                {
+                    trackCurrentLengthTextBlock.Text = currentTime.Minutes.ToString() + ":" + currentTime.Seconds.ToString();
+                }
+                trackPositionSlider.Value = currentTime.TotalSeconds;
+            }
+            
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -361,6 +443,7 @@ namespace WpfApp2
             trackRecievedCover.Source = displayCoverImage0.Source;
             trackRecievedName.Text = displayNameTextBlock0.Text;
             trackRecievedArtist.Text = displayArtistTextBlock0.Text;
+            
         }
 
         private void displayCoverImage1_MouseUp(object sender, MouseButtonEventArgs e)
@@ -389,5 +472,25 @@ namespace WpfApp2
             trackRecievedName.Text = displayNameTextBlock3.Text;
             trackRecievedArtist.Text = displayArtistTextBlock3.Text;
         }
+
+        private void trackVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (mediaPlayer != null)
+            {
+                mediaPlayer.Volume = trackVolumeSlider.Value / 150.0;
+            }
+        }
+
+        private void trackPositionSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            timerPaused = true;
+        }
+        private void trackPositionSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            mediaPlayer.Position = TimeSpan.FromSeconds(trackPositionSlider.Value);
+            timerPaused = false;
+        }
+
+        
     }
 }

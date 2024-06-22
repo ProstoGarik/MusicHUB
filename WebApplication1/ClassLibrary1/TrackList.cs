@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
@@ -130,6 +131,11 @@ namespace ClassLibrary1
             return Tracks[currentIndex + startingIndex].TrackArtist;
         }
 
+        public DateTime GetDisplayDate(int startingIndex, int currentIndex)
+        {
+            return Tracks[currentIndex + startingIndex].TrackAdded;
+        }
+
         public Track GetTrackByIndex(int index)
         {
             return Tracks[index];
@@ -142,17 +148,28 @@ namespace ClassLibrary1
                 .Select(g => g.Select(v => v.Value).ToList())
                 .ToList();
         }
-        public int CheckForTrackCount()
+        public int CheckForTrackCount(int startingIndex)
         {
-            switch (tracks.Count)
+            if(tracks.Count == 0 + startingIndex)
             {
-                case 0: return 0;
-                case 1: return 1;
-                case 2: return 2;
-                case 3: return 3;
-                    default : return 4;
+                return 0;
             }
-
+            else if(tracks.Count == 1 + startingIndex)
+            {
+                return 1;
+            }
+            else if (tracks.Count == 2 + startingIndex)
+            {
+                return 2;
+            }
+            else if (tracks.Count == 3 + startingIndex)
+            {
+                return 3;
+            }
+            else
+            {
+                return 4;
+            }
         }
     }
 }

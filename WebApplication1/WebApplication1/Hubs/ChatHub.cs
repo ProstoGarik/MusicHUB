@@ -66,7 +66,7 @@ namespace WebApplication1.Hubs
         public async Task GetCoverForDisplay(int startIndex)
         {
             Load();
-            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
+            for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
                 int byteCount = trackList.GetTrackByIndex(i).TrackCoverBytes.Count;
                 foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(startIndex, i))
@@ -80,7 +80,7 @@ namespace WebApplication1.Hubs
         public async Task GetNamesForDisplay(int startIndex)
         {
             Load();
-            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
+            for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
                 await Clients.All.SendAsync("RecieveDisplayName", trackList.GetDisplayName(startIndex, i), i);
             }
@@ -89,10 +89,19 @@ namespace WebApplication1.Hubs
         public async Task GetArtistsForDisplay(int startIndex)
         {
             Load();
-            for (int i = 0; i < trackList.CheckForTrackCount(); i++)
+            for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
                 await Clients.All.SendAsync("RecieveDisplayArtist", trackList.GetDisplayArtist(startIndex, i), i);
             }
         }
+        public async Task GetDatesForDisplay(int startIndex)
+        {
+            Load();
+            for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
+            {
+                await Clients.All.SendAsync("RecieveDisplayDate", trackList.GetDisplayDate(startIndex, i), i);
+            }
+        }
+
     }
 }

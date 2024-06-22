@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
+        MinHeight="450" MinWidth="800"
         Title="MainWindow" Height="450" Width="800" WindowStyle="None">
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0"
@@ -71,6 +72,7 @@
                 <TextBlock Grid.Column="1" Name="displayNameTextBlock0" Width="auto" Height="auto" Margin="10 10 10 40" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
                 <TextBlock Grid.Column="1" Name="displayArtistTextBlock0" Width="auto" Height="auto" Margin="10 40 10 10" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
             </Grid>
+            <TextBlock Grid.Column="2" Name="displayDateTextBlock0" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Grid Grid.Row="1" Grid.Column="0">
                 <TextBlock Grid.Column="0" Name="track1NumberTextBlock" Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             </Grid>
@@ -83,6 +85,7 @@
                 <TextBlock Grid.Column="1" Name="displayNameTextBlock1" Width="auto" Height="auto" Margin="10 10 10 40" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage1_MouseUp"/>
                 <TextBlock Grid.Column="1" Name="displayArtistTextBlock1" Width="auto" Height="auto" Margin="10 40 10 10" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
             </Grid>
+            <TextBlock Grid.Row="1" Grid.Column="2" Name="displayDateTextBlock1" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Grid Grid.Row="2">
                 <TextBlock Grid.Column="0" Name="track2NumberTextBlock" Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             </Grid>
@@ -95,6 +98,7 @@
                 <TextBlock Grid.Column="1" Name="displayNameTextBlock2" Width="auto" Height="auto" Margin="10 10 10 40" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage2_MouseUp"/>
                 <TextBlock Grid.Column="1" Name="displayArtistTextBlock2" Width="auto" Height="auto" Margin="10 40 10 10" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
             </Grid>
+            <TextBlock Grid.Row="2" Grid.Column="2" Name="displayDateTextBlock2" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Grid Grid.Row="3">
                 <TextBlock Grid.Column="0" Name="track3NumberTextBlock" Text="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             </Grid>
@@ -107,6 +111,7 @@
                 <TextBlock Grid.Column="1" Name="displayNameTextBlock3" Width="auto" Height="auto" Margin="10 10 10 40" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage3_MouseUp"/>
                 <TextBlock Grid.Column="1" Name="displayArtistTextBlock3" Width="auto" Height="auto" Margin="10 40 10 10" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
             </Grid>
+            <TextBlock Grid.Row="3" Grid.Column="2" Name="displayDateTextBlock3" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
         </Grid>
         <Grid Grid.Row="3" ShowGridLines="True">
             <Grid.ColumnDefinitions>
@@ -120,20 +125,30 @@
                 <Image Name="trackRecievedCover" Width="auto" Height="auto" Margin="5 5"/>
             </Grid>
             <Grid Grid.Column="1">
-                <TextBlock Name="trackRecievedName" Width="auto" Height="25" Text="NoName" FontSize="16" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="10 0 10 40" Foreground="White"/>
-                <TextBlock Name="trackRecievedArtist" Width="auto" Height="25" Text="NoArtist" FontSize="14" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="10 25 10 0" Foreground="Gray"/>
+                <TextBlock Name="trackRecievedName" Width="auto" Height="25" FontSize="16" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="10 0 10 40" Foreground="White"/>
+                <TextBlock Name="trackRecievedArtist" Width="auto" Height="25" FontSize="14" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="10 25 10 0" Foreground="Gray"/>
             </Grid>
             <Grid Grid.Column="2">
-                <Button Grid.Column="2" Name="playTrackButton" Width="40" Height="40" Margin="0 0 0 30" Background="White" BorderThickness="0" Click="playTrackButton_Click">
-                    <Image Source="{StaticResource playTrack}" Width="35" Height="35" Stretch="Fill"/>
-                </Button>
-                <Slider Name="trackPositionSlider" Width="auto" Margin="55 45 55 10"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1">
+                    <Button Name="playTrackButton" Width="40" Height="40" Margin="0 0 0 30" Background="#8CBEB2" BorderThickness="0" Click="playTrackButton_Click">
+                        <Image Name="playTrackImage" Source="{StaticResource playTrack}" Width="35" Height="35" Stretch="Fill"/>
+                    </Button>
+                    <Slider Name="trackPositionSlider" Width="auto" Margin="10 45 10 10" Thumb.DragStarted="trackPositionSlider_DragStarted" Thumb.DragCompleted="trackPositionSlider_DragCompleted"/>
+                </Grid>
+                <TextBlock Grid.Column="0" Name="trackCurrentLengthTextBlock" Width="auto" Height="25" Text="0:00" FontSize="12" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="0 40 0 0" Foreground="White"/>
+                <TextBlock Grid.Column="2" Name="trackFullLengthTextBlock" Width="auto" Height="25" Text="0:00" FontSize="12" Style="{StaticResource CustomFont}" FontWeight="Bold" Margin="0 40 0 0" Foreground="White"/>
             </Grid>
             <Grid Grid.Column="3">
-                <Button Grid.Column="2" Name="muteButton" Width="20" Height="20" Margin="0 0 120 0" Background="White" BorderThickness="0" Click="playTrackButton_Click">
+                <Button Grid.Column="2" Name="muteButton" Width="20" Height="20" Margin="0 0 120 0" Background="#8CBEB2" BorderThickness="0">
                     <Image Source="{StaticResource volume}" Width="20" Height="20" Stretch="Fill"/>
                 </Button>
-                <Slider Name="trackVolumeSlider" Width="auto" VerticalAlignment="Center" Margin="45 0 10 0"/>
+                <Slider Name="trackVolumeSlider" Width="auto" VerticalAlignment="Center" Margin="45 0 10 0"
+                        Minimum="0" Maximum="150" Value="100" ValueChanged="trackVolumeSlider_ValueChanged"/>
             </Grid>
         </Grid>
     </Grid>

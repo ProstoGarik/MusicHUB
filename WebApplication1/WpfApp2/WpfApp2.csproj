@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\UI\arrowRightIcon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Resources\UI\exitX.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
