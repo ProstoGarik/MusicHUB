@@ -57,8 +57,8 @@ namespace WebApplication1.Hubs
             {
                 foreach (var byteChunk in trackList.GetSplittedAudioBytes(trackName))
                 {     
-                    await Clients.All.SendAsync("RecieveAudioBytes", byteChunk);
-                    await Clients.All.SendAsync("RecievingAudioDone", trackList.GetTrackByteCount(trackName, true));
+                    await Clients.Caller.SendAsync("RecieveAudioBytes", byteChunk);
+                    await Clients.Caller.SendAsync("RecievingAudioDone", trackList.GetTrackByteCount(trackName, true));
                 }
             }
             else
@@ -72,9 +72,9 @@ namespace WebApplication1.Hubs
                 int byteCount = trackList.GetTrackByIndex(i+startIndex).TrackCoverBytes.Count;
                 foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(i+startIndex))
                 {
-                    await Clients.All.SendAsync("RecieveDisplayCoverBytes",byteChunk);
+                    await Clients.Caller.SendAsync("RecieveDisplayCoverBytes",byteChunk);
                 }
-                await Clients.All.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
+                await Clients.Caller.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
             }
         }
 
@@ -83,7 +83,7 @@ namespace WebApplication1.Hubs
             Load();
             for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
-                await Clients.All.SendAsync("RecieveDisplayName", trackList.GetDisplayName(startIndex, i), i);
+                await Clients.Caller.SendAsync("RecieveDisplayName", trackList.GetDisplayName(startIndex, i), i);
             }
         }
 
@@ -92,7 +92,7 @@ namespace WebApplication1.Hubs
             Load();
             for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
-                await Clients.All.SendAsync("RecieveDisplayArtist", trackList.GetDisplayArtist(startIndex, i), i);
+                await Clients.Caller.SendAsync("RecieveDisplayArtist", trackList.GetDisplayArtist(startIndex, i), i);
             }
         }
 
@@ -101,7 +101,7 @@ namespace WebApplication1.Hubs
             Load();
             for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
-                await Clients.All.SendAsync("RecieveDisplayDuration", trackList.GetDisplayDuration(startIndex, i), i);
+                await Clients.Caller.SendAsync("RecieveDisplayDuration", trackList.GetDisplayDuration(startIndex, i), i);
             }
         }
 
@@ -110,7 +110,7 @@ namespace WebApplication1.Hubs
             Load();
             for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
-                await Clients.All.SendAsync("RecieveDisplayDate", trackList.GetDisplayDate(startIndex, i), i);
+                await Clients.Caller.SendAsync("RecieveDisplayDate", trackList.GetDisplayDate(startIndex, i), i);
             }
         }
 

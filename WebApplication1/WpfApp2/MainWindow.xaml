@@ -70,7 +70,7 @@
                 <TextBlock Grid.Column="1" Name="displayNameTextBlock0" Width="auto" Height="auto" Margin="10 10 10 40" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
                 <TextBlock Grid.Column="1" Name="displayArtistTextBlock0" Width="auto" Height="auto" Margin="10 40 10 10" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseUp="displayCoverImage0_MouseUp"/>
             </Grid>
-            <TextBlock Grid.Column="2" Name="displayDateTextBlock0" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <TextBlock Grid.Column="2" Name="displayDateTextBlock0" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Grid.Column="3" Name="displayDurationTextBlock0" Width="auto" Height="auto" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Button Grid.Row="0" Grid.Column="4" Name="deleteTrackButton0" Width="20" Height="20" Margin="0" HorizontalAlignment="Left" Background="#F3B562" BorderThickness="0" Visibility="Collapsed" Click="deleteTrackButton0_Click_1">
                 <Image Source="{StaticResource remove}" Width="20" Height="20" Stretch="Fill"/>
@@ -93,7 +93,7 @@
             <Button Grid.Row="1" Grid.Column="4" Name="deleteTrackButton1" Width="20" Height="20" Margin="0" HorizontalAlignment="Left" Background="#F3B562" BorderThickness="0" Visibility="Collapsed" Click="deleteTrackButton1_Click">
                 <Image Source="{StaticResource remove}" Width="20" Height="20" Stretch="Fill"/>
             </Button>
-            <TextBlock Grid.Row="1" Grid.Column="2" Name="displayDateTextBlock1" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Name="displayDateTextBlock1" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Grid.Row="1" Grid.Column="3" Name="displayDurationTextBlock1" Width="auto" Height="auto" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Grid Grid.Row="2">
                 <TextBlock Grid.Column="0" Name="track2NumberTextBlock" Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
@@ -110,7 +110,7 @@
             <Button Grid.Row="2" Grid.Column="4" Name="deleteTrackButton2" Width="20" Height="20" Margin="0" HorizontalAlignment="Left" Background="#F3B562" BorderThickness="0" Visibility="Collapsed" Click="deleteTrackButton2_Click">
                 <Image Source="{StaticResource remove}" Width="20" Height="20" Stretch="Fill"/>
             </Button>
-            <TextBlock Grid.Row="2" Grid.Column="2" Name="displayDateTextBlock2" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" Name="displayDateTextBlock2" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Grid.Row="2" Grid.Column="3" Name="displayDurationTextBlock2" Width="auto" Height="auto" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Grid Grid.Row="3">
                 <TextBlock Grid.Column="0" Name="track3NumberTextBlock" Text="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
@@ -127,7 +127,7 @@
             <Button Grid.Row="3" Grid.Column="4" Name="deleteTrackButton3" Width="20" Height="20" Margin="0" HorizontalAlignment="Left" Background="#F3B562" BorderThickness="0" Visibility="Collapsed" Click="deleteTrackButton3_Click">
                 <Image Source="{StaticResource remove}" Width="20" Height="20" Stretch="Fill"/>
             </Button>
-            <TextBlock Grid.Row="3" Grid.Column="2" Name="displayDateTextBlock3" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="16" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
+            <TextBlock Grid.Row="3" Grid.Column="2" Name="displayDateTextBlock3" Width="auto" Height="auto" VerticalAlignment="Center" Margin="10 0" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <TextBlock Grid.Row="3" Grid.Column="3" Name="displayDurationTextBlock3" Width="auto" Height="auto" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             <Button Grid.Row="3" Grid.Column="4" Name="moveDisplayDownButton" Width="55" Height="40" Margin="0 0 0 0" Background="#F3B562" BorderThickness="0" Click="moveDisplayDownButton_Click">
                 <Image Source="{StaticResource moveDown}" Width="40" Height="40" Stretch="Fill"/>

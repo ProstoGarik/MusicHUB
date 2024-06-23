@@ -120,20 +120,17 @@ namespace WpfApp2
             });
 
 
-            hubConnection.On<List<byte>>("RecieveDisplayCoverBytes", async bytes =>
+            hubConnection.On<List<byte>>("RecieveDisplayCoverBytes", bytes =>
             {
-                await Task.Run(() =>
-                {
-                    recievedBytesDisplayCover.AddRange(bytes);
-                });
+                recievedBytesDisplayCover.AddRange(bytes);
             });
 
-            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", async (count, index) =>
+            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", (count, index) =>
             {
                 switch (index)
                 {
                     case 0:
-                        await ApplyDisplayCover(0);
+                        ApplyDisplayCover(0);
                         Dispatcher.Invoke(() =>
                         {
                             displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
@@ -141,7 +138,7 @@ namespace WpfApp2
                         recievedBytesDisplayCover = new List<byte>();
                         break;
                     case 1:
-                        await ApplyDisplayCover(1);
+                        ApplyDisplayCover(1);
                         Dispatcher.Invoke(() =>
                         {
                             try
@@ -150,14 +147,14 @@ namespace WpfApp2
                             }
                             catch
                             {
-                                Thread.Sleep(100);
+                                Thread.Sleep(300);
                                 ApplyDisplayCover(1);
                             }
                         });
                         recievedBytesDisplayCover = new List<byte>();
                         break;
                     case 2:
-                        await ApplyDisplayCover(2);
+                        ApplyDisplayCover(2);
                         Dispatcher.Invoke(() =>
                         {
                             try
@@ -166,14 +163,14 @@ namespace WpfApp2
                             }
                             catch
                             {
-                                Thread.Sleep(100);
+                                Thread.Sleep(300);
                                 ApplyDisplayCover(2);
                             }
                         });
                         recievedBytesDisplayCover = new List<byte>();
                         break;
                     case 3:
-                        await ApplyDisplayCover(3);
+                        ApplyDisplayCover(3);
                         Dispatcher.Invoke(() =>
                         {
                             try
@@ -182,7 +179,7 @@ namespace WpfApp2
                             }
                             catch
                             {
-                                Thread.Sleep(100);
+                                Thread.Sleep(300);
                                 ApplyDisplayCover(3);
                             }
                         });
@@ -562,9 +559,9 @@ namespace WpfApp2
                 ClearDisplay();
                 displayStartIndex -= 4;
                 track0NumberTextBlock.Text = (1 + displayStartIndex).ToString();
-                track1NumberTextBlock.Text = (1 + displayStartIndex).ToString();
-                track2NumberTextBlock.Text = (1 + displayStartIndex).ToString();
-                track3NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+                track1NumberTextBlock.Text = (2 + displayStartIndex).ToString();
+                track2NumberTextBlock.Text = (3 + displayStartIndex).ToString();
+                track3NumberTextBlock.Text = (4 + displayStartIndex).ToString();
                 await GetDisplays();
                 EndLoading();
             }

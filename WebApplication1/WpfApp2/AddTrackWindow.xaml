@@ -36,8 +36,10 @@
                 <TextBlock Text="Выбрать фото" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold"/>
             </Grid>
                 <Button Grid.Column="1" Name="chooseAudioButton" HorizontalAlignment="Center" VerticalAlignment="Top" Width="130" Height="30" Margin="0 5 0 0" Content="Выбрать звук" Background="#82a69e" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" Click="chooseAudioButton_Click"/>
-            <TextBox Name="trackName" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="10 0 10 50" Text="Название" Background="#A8C2BC" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseDown="trackName_MouseDown"/>
-            <TextBox Name="trackArtist" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="10 0 10 10" Text="Автор" Background="#A8C2BC" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" MouseDown="trackArtist_MouseDown"/>
+            <TextBox Name="trackName" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="10 0 10 50" Background="#A8C2BC" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" TextChanged="trackName_TextChanged"/>
+            <TextBlock Name="tempTextName" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="15 0 10 50" Text="Название" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" IsHitTestVisible="False"/>
+            <TextBox Name="trackArtist" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="10 0 10 10" Background="#A8C2BC" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" TextChanged="trackArtist_TextChanged"/>
+            <TextBlock Name="tempTextArtist" Grid.Column="1" VerticalAlignment="Bottom" Height="30" Margin="15 0 10 10" Text="Автор" FontSize="14" Foreground="Gray" Style="{StaticResource CustomFont}" FontWeight="Bold" IsHitTestVisible="False"/>
         </Grid>
         <Grid Grid.Row="2">
             <Button Name="addTrackButton" HorizontalAlignment="Right" Width="110" Height="40" Margin="0 0 10 0" Content="Добавить" Background="#82a69e" FontSize="14" Foreground="White" Style="{StaticResource CustomFont}" FontWeight="Bold" Click="addTrackButton_Click"/>

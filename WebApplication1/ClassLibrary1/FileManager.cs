@@ -6,38 +6,40 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Text.Json;
+using System.IO.Compression;
 
 namespace ClassLibrary1
 {
-    
-    public  class FileManager
+
+    public class FileManager
     {
-        private string tempFolderPath = "Z:\\TempFolder";
-        public FileManager() {
-            TrackList trackList = new TrackList();
-        }
+        private readonly string tempFolderPath = "Z:\\TempFolder";
 
         public void SaveFile(TrackList trackList)
         {
-            string jsonString = JsonSerializer.Serialize(trackList);
-            File.WriteAllText(tempFolderPath + "\\tracklist.json", jsonString);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = false // Отключаем форматирование
+            };
+            string jsonString = JsonSerializer.Serialize(trackList, options);
+
+            // Записываем JSON в файл
+            File.WriteAllText(Path.Combine(tempFolderPath, "tracklist.json"), jsonString);
         }
 
         public TrackList LoadFile()
         {
             try
             {
-                using (StreamReader r = new StreamReader(tempFolderPath + "\\tracklist.json"))
-                {
-                    string jsonFile = r.ReadToEnd();
-                    return JsonSerializer.Deserialize<TrackList>(jsonFile);
-                }
+                // Читаем JSON из файла
+                string jsonFile = File.ReadAllText(Path.Combine(tempFolderPath, "tracklist.json"));
+
+                return JsonSerializer.Deserialize<TrackList>(jsonFile);
             }
             catch
             {
                 return new TrackList();
             }
-            
         }
     }
 }

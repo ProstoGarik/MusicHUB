@@ -77,14 +77,14 @@ namespace WpfApp2
             chooseCoverOverlay.Visibility = Visibility.Collapsed;
         }
 
-        private void trackName_MouseDown(object sender, MouseButtonEventArgs e)
+        private void trackName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            trackName.Text = string.Empty;
+            tempTextName.Text = "";
         }
 
-        private void trackArtist_MouseDown(object sender, MouseButtonEventArgs e)
+        private void trackArtist_TextChanged(object sender, TextChangedEventArgs e)
         {
-            trackArtist.Text = string.Empty;
+            tempTextArtist.Text = "";
         }
     }
 }
