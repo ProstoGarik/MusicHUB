@@ -16,5 +16,7 @@
         <BitmapImage x:Key="remove" UriSource="Resources/UI/removeIcon.png"/>
         <BitmapImage x:Key="addPlus" UriSource="Resources/UI/addPlus.png"/>
         <BitmapImage x:Key="default" UriSource="Resources/UI/defaultIcon.png"/>
+        <BitmapImage x:Key="maximize" UriSource="Resources/UI/maximizeIcon.png"/>
+        <BitmapImage x:Key="maximize2" UriSource="Resources/UI/maximizeIcon2.png"/>
     </Application.Resources>
 </Application>

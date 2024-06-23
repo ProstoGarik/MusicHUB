@@ -651,5 +651,24 @@ namespace WpfApp2
             await GetDisplays();
             EndLoading();
         }
+
+        private void minimizeAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void maximizeeAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(WindowState == WindowState.Normal)
+            {
+                WindowState = WindowState.Maximized;
+                maximizeImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\maximizeIcon2.png")));
+            }
+            else
+            {
+                WindowState = WindowState.Normal;
+                maximizeImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\maximizeIcon.png")));
+            }
+        }
     }
 }

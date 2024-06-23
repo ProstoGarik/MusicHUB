@@ -15,6 +15,7 @@
     <None Remove="Resources\UI\arrowUp.png" />
     <None Remove="Resources\UI\defaultIcon.png" />
     <None Remove="Resources\UI\exitX.png" />
+    <None Remove="Resources\UI\maximizeIcon.png" />
     <None Remove="Resources\UI\playTrackIcon.png" />
     <None Remove="Resources\UI\removeIcon.png" />
     <None Remove="Resources\UI\volumeIcon.png" />
@@ -39,6 +40,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\UI\exitX.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\maximizeIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\UI\playTrackIcon.png">
