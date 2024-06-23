@@ -116,9 +116,9 @@ namespace ClassLibrary1
             return 0;
         }
 
-        public List<List<byte>> GetSplittedDisplayCoverBytes(int startingIndex, int currentIndex)
+        public List<List<byte>> GetSplittedDisplayCoverBytes(int index)
         {
-            return Tracks[currentIndex + startingIndex].GetSplittedCoverBytes();
+            return Tracks[index].GetSplittedCoverBytes();
         }
 
         public string GetDisplayName(int startingIndex, int currentIndex)
@@ -135,10 +135,26 @@ namespace ClassLibrary1
         {
             return Tracks[currentIndex + startingIndex].TrackAdded;
         }
+        public TimeSpan GetDisplayDuration(int startingIndex, int currentIndex)
+        {
+            return Tracks[currentIndex + startingIndex].GetMp3Duration();
+        }
 
         public Track GetTrackByIndex(int index)
         {
             return Tracks[index];
+        }
+
+        public async Task DeleteTrack(string trackName)
+        {
+            await Task.Run(() =>
+            {
+                var trackToRemove = tracks.FirstOrDefault(track => track.TrackName == trackName);
+                if (trackToRemove != null)
+                {
+                    tracks.Remove(trackToRemove);
+                }
+            });
         }
         private static List<List<byte>> SplitList(List<byte> source, int size)
         {
@@ -150,7 +166,7 @@ namespace ClassLibrary1
         }
         public int CheckForTrackCount(int startingIndex)
         {
-            if(tracks.Count == 0 + startingIndex)
+            if(tracks.Count <= 0 + startingIndex)
             {
                 return 0;
             }

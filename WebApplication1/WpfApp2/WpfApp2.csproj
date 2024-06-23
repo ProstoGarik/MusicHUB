@@ -9,9 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\UI\addPlus.png" />
+    <None Remove="Resources\UI\arrowDown.png" />
     <None Remove="Resources\UI\arrowRightIcon.png" />
+    <None Remove="Resources\UI\arrowUp.png" />
+    <None Remove="Resources\UI\defaultIcon.png" />
     <None Remove="Resources\UI\exitX.png" />
     <None Remove="Resources\UI\playTrackIcon.png" />
+    <None Remove="Resources\UI\removeIcon.png" />
+    <None Remove="Resources\UI\volumeIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,10 +26,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\UI\addPlus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\arrowDown.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\arrowUp.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\defaultIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\UI\exitX.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\UI\playTrackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\removeIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\UI\volumeIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

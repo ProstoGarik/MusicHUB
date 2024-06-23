@@ -49,6 +49,7 @@ namespace WebApplication1.Hubs
             }
             Save();
         }
+
         public async Task GetAudioBytes(string trackName)
         {
             Load();
@@ -68,12 +69,12 @@ namespace WebApplication1.Hubs
             Load();
             for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
             {
-                int byteCount = trackList.GetTrackByIndex(i).TrackCoverBytes.Count;
-                foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(startIndex, i))
+                int byteCount = trackList.GetTrackByIndex(i+startIndex).TrackCoverBytes.Count;
+                foreach (var byteChunk in trackList.GetSplittedDisplayCoverBytes(i+startIndex))
                 {
                     await Clients.All.SendAsync("RecieveDisplayCoverBytes",byteChunk);
-                    await Clients.All.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
-                }     
+                }
+                await Clients.All.SendAsync("RecieveDisplayCoverBytesDone", byteCount, i);
             }
         }
 
@@ -94,6 +95,16 @@ namespace WebApplication1.Hubs
                 await Clients.All.SendAsync("RecieveDisplayArtist", trackList.GetDisplayArtist(startIndex, i), i);
             }
         }
+
+        public async Task GetDurationForDisplay(int startIndex)
+        {
+            Load();
+            for (int i = 0; i < trackList.CheckForTrackCount(startIndex); i++)
+            {
+                await Clients.All.SendAsync("RecieveDisplayDuration", trackList.GetDisplayDuration(startIndex, i), i);
+            }
+        }
+
         public async Task GetDatesForDisplay(int startIndex)
         {
             Load();
@@ -101,6 +112,13 @@ namespace WebApplication1.Hubs
             {
                 await Clients.All.SendAsync("RecieveDisplayDate", trackList.GetDisplayDate(startIndex, i), i);
             }
+        }
+
+        public async Task DeleteTrack(string trackName)
+        {
+            Load();
+            await trackList.DeleteTrack(trackName);
+            Save();
         }
 
     }

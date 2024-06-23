@@ -1,3 +1,4 @@
+using NAudio.Wave;
 namespace ClassLibrary1
 {
     public class Track
@@ -35,6 +36,18 @@ namespace ClassLibrary1
                 .Select(g => g.Select(v => v.Value).ToList())
                 .ToList();
         }
+
+        public TimeSpan GetMp3Duration()
+        {
+            using (MemoryStream mp3Stream = new MemoryStream(TrackAudioBytes.ToArray(), writable: false))
+            {
+                using (Mp3FileReader mp3Reader = new Mp3FileReader(mp3Stream))
+                {
+                    return mp3Reader.TotalTime;
+                }
+            }
+        }
+
         public string TrackName { get => trackName; set => trackName = value; }
         public List<byte> TrackCoverBytes { get => trackCoverBytes; set => trackCoverBytes = value; }
         public List<byte> TrackAudioBytes { get => trackAudioBytes; set => trackAudioBytes = value; }

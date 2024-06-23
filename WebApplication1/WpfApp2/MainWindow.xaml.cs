@@ -35,6 +35,7 @@ namespace WpfApp2
         private Uri TempAudioUri;
         DispatcherTimer timer;
         private bool timerPaused = false;
+        AddTrackWindow addTrackWindow;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,14 +49,19 @@ namespace WpfApp2
             tempBytesCover = new byte[] { };
             mediaPlayer = new MediaPlayer();
             mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+            
+            
 
             TempAudioUri = new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\mymusic.wav"));
         }
 
         private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
         {
-            trackFullLengthTextBlock.Text = mediaPlayer.NaturalDuration.TimeSpan.Minutes.ToString() + ":" + mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString();
+            string seconds = mediaPlayer.NaturalDuration.TimeSpan.Seconds < 10 ? "0" + mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString() : mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString();
+            trackFullLengthTextBlock.Text = mediaPlayer.NaturalDuration.TimeSpan.Minutes.ToString() + ":" + seconds;
             trackPositionSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+            EndLoadingPlayer();
+            timerPaused = false;
         }
 
         public async Task HubConnetction_Closed(Exception? arg)
@@ -78,9 +84,8 @@ namespace WpfApp2
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            StartLoading();
             //hubConnection.On<string>("RecieveMessage", message => { UpdateListBox(message); });
-
             hubConnection.On<List<byte>>("RecieveAudioBytes", bytes => {
                 recievedBytes.AddRange(bytes);
                 //if (!listBox1.Dispatcher.CheckAccess())
@@ -98,9 +103,8 @@ namespace WpfApp2
                 await hubConnection.StartAsync();
 
             }
-            catch (Exception ex)
+            catch
             {
-                //listBox1.Items.Add(ex.Message);
             }
 
             hubConnection.On<int>("RecievingAudioDone", async byteCount =>
@@ -116,86 +120,77 @@ namespace WpfApp2
             });
 
 
-            hubConnection.On<List<byte>>("RecieveDisplayCoverBytes", bytes =>
+            hubConnection.On<List<byte>>("RecieveDisplayCoverBytes", async bytes =>
             {
-                recievedBytesDisplayCover.AddRange(bytes);
+                await Task.Run(() =>
+                {
+                    recievedBytesDisplayCover.AddRange(bytes);
+                });
             });
 
-            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", (count, index) =>
+            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", async (count, index) =>
             {
-                if (count == recievedBytesDisplayCover.Count)
+                switch (index)
                 {
-                    switch (index)
-                    {
-                        case 0:
-                            ApplyDisplayCover(0);
+                    case 0:
+                        await ApplyDisplayCover(0);
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
+                        });
+                        recievedBytesDisplayCover = new List<byte>();
+                        break;
+                    case 1:
+                        await ApplyDisplayCover(1);
+                        Dispatcher.Invoke(() =>
+                        {
                             try
                             {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
-                                });
-                                recievedBytesDisplayCover = new List<byte>();
+                                displayCoverImage1.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display2.png")));
                             }
-                            catch (Exception)
+                            catch
                             {
-                                throw;
+                                Thread.Sleep(100);
+                                ApplyDisplayCover(1);
                             }
-                            break;
-                        case 1:
-                            ApplyDisplayCover(1);
+                        });
+                        recievedBytesDisplayCover = new List<byte>();
+                        break;
+                    case 2:
+                        await ApplyDisplayCover(2);
+                        Dispatcher.Invoke(() =>
+                        {
                             try
                             {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    displayCoverImage1.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display2.png")));
-                                });
-                                recievedBytesDisplayCover = new List<byte>();
+                                displayCoverImage2.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display3.png")));
                             }
-                            catch (Exception)
+                            catch
                             {
-                                throw;
+                                Thread.Sleep(100);
+                                ApplyDisplayCover(2);
                             }
-                            
-                            break;
-                        case 2:
-                            ApplyDisplayCover(2);
+                        });
+                        recievedBytesDisplayCover = new List<byte>();
+                        break;
+                    case 3:
+                        await ApplyDisplayCover(3);
+                        Dispatcher.Invoke(() =>
+                        {
                             try
                             {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    displayCoverImage2.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display3.png")));
-                                });
-                                recievedBytesDisplayCover = new List<byte>();
+                                displayCoverImage3.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display4.png")));
                             }
-                            catch (Exception)
+                            catch
                             {
-
-                                throw;
+                                Thread.Sleep(100);
+                                ApplyDisplayCover(3);
                             }
-                            
-                            break;
-                        case 3:
-                            ApplyDisplayCover(3);
-                            try
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    displayCoverImage3.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display4.png")));
-                                });
-                                recievedBytesDisplayCover = new List<byte>();
-                            }
-                            catch (Exception)
-                            {
-
-                                throw;
-                            }
-                            
-                            break;
-                        default:
-                            break;
-                    }
-                }            
+                        });
+                        recievedBytesDisplayCover = new List<byte>();
+                        break;
+                    default:
+                        break;
+                }
             });
 
             hubConnection.On<string, int>("RecieveDisplayName", (name, index) =>
@@ -206,24 +201,28 @@ namespace WpfApp2
                         Dispatcher.Invoke(() =>
                         {
                             displayNameTextBlock0.Text = name;
+                            deleteTrackButton0.Visibility = Visibility.Visible;
                         });
                         break;
                     case 1:
                         Dispatcher.Invoke(() =>
                         {
                             displayNameTextBlock1.Text = name;
+                            deleteTrackButton1.Visibility = Visibility.Visible;
                         });
                         break;
                     case 2:
                         Dispatcher.Invoke(() =>
                         {
                             displayNameTextBlock2.Text = name;
+                            deleteTrackButton2.Visibility = Visibility.Visible;
                         });
                         break;
                     case 3:
                         Dispatcher.Invoke(() =>
                         {
                             displayNameTextBlock3.Text = name;
+                            deleteTrackButton3.Visibility = Visibility.Visible;
                         });
                         break;
                     default:
@@ -278,19 +277,19 @@ namespace WpfApp2
                     case 1:
                         Dispatcher.Invoke(() =>
                         {
-                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                            displayDateTextBlock1.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
                         });
                         break;
                     case 2:
                         Dispatcher.Invoke(() =>
                         {
-                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                            displayDateTextBlock2.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
                         });
                         break;
                     case 3:
                         Dispatcher.Invoke(() =>
                         {
-                            displayDateTextBlock0.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
+                            displayDateTextBlock3.Text = date.Day + "." + date.Month + "." + date.Year + " " + date.Hour + ":" + minute;
                         });
                         break;
                     default:
@@ -298,10 +297,42 @@ namespace WpfApp2
                 }
             });
 
-            await hubConnection.InvokeAsync("GetCoverForDisplay", displayStartIndex);
-            await hubConnection.InvokeAsync("GetNamesForDisplay", displayStartIndex);
-            await hubConnection.InvokeAsync("GetArtistsForDisplay", displayStartIndex);
-            await hubConnection.InvokeAsync("GetDatesForDisplay", displayStartIndex);
+            hubConnection.On<TimeSpan, int>("RecieveDisplayDuration", (Duration, index) =>
+            {
+                string seconds = Duration.Seconds < 10 ? "0" + Duration.Seconds.ToString() : Duration.Seconds.ToString();
+                switch (index)
+                {          
+                    case 0:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDurationTextBlock0.Text = Duration.Minutes.ToString() +":" + seconds; 
+                        });
+                        break;
+                    case 1:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDurationTextBlock1.Text = Duration.Minutes.ToString() + ":" + seconds;
+                        });
+                        break;
+                    case 2:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDurationTextBlock2.Text = Duration.Minutes.ToString() + ":" + seconds;
+                        });
+                        break;
+                    case 3:
+                        Dispatcher.Invoke(() =>
+                        {
+                            displayDurationTextBlock3.Text = Duration.Minutes.ToString() + ":" + seconds;
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            await GetDisplays();
+            EndLoading();
         }
         private async Task ApplyDisplayCover(int displayNumber)
         {
@@ -336,41 +367,6 @@ namespace WpfApp2
             }
         }
 
-        private void chooseFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            bool? success = dialog.ShowDialog();
-            if(success == true)
-            {
-                tempBytes = File.ReadAllBytes(dialog.FileName);
-            }
-        }
-
-        private void chooseFileCoverButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            bool? success = dialog.ShowDialog();
-            if (success == true)
-            {
-                tempBytesCover = File.ReadAllBytes(dialog.FileName);
-            }
-        }
-
-        private void sendFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 1000000);
-            foreach (List<byte> list in listsList)
-            {
-                hubConnection.InvokeAsync("SendAudioBytes", list, trackName.Text, trackArtist.Text);
-            }
-
-            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 1000000);
-            foreach (List<byte> list2 in listsListCover)
-            {
-                hubConnection.InvokeAsync("SendCoverBytes", list2, trackName.Text, trackArtist.Text);
-            }
-        }
-
         public static List<List<byte>> SplitList(List<byte> source, int size)
         {
             return source
@@ -382,9 +378,12 @@ namespace WpfApp2
 
         private void ClearPlayer()
         {
+            timerPaused = true;
+            isPlaying = false;
             mediaPlayer.Stop();
             mediaPlayer.Close();
             recievedBytes = new List<byte> { };
+            playTrackImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\playTrackIcon.png")));
         }
         private void playTrackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -413,10 +412,14 @@ namespace WpfApp2
             if(!timerPaused)
             {
                 TimeSpan currentTime = mediaPlayer.Position;
-                if (currentTime.TotalSeconds <= 0)
+                if (currentTime.TotalSeconds >= mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds)
                 {
                     timer.Stop();
                     currentTime = TimeSpan.Zero;
+                    playTrackImage.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\Resources\\UI\\playTrackIcon.png")));
+                    isPlaying = false;
+                    mediaPlayer.Stop();
+                    mediaPlayer.Position = currentTime;
                 }
                 if (currentTime.Seconds < 10)
                 {
@@ -438,6 +441,7 @@ namespace WpfApp2
 
         private void displayCoverImage0_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            StartLoadingPlayer();
             ClearPlayer();
             hubConnection.InvokeAsync("GetAudioBytes", displayNameTextBlock0.Text);
             trackRecievedCover.Source = displayCoverImage0.Source;
@@ -448,15 +452,18 @@ namespace WpfApp2
 
         private void displayCoverImage1_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            StartLoadingPlayer();
             ClearPlayer();
             hubConnection.InvokeAsync("GetAudioBytes", displayNameTextBlock1.Text);
             trackRecievedCover.Source = displayCoverImage1.Source;
             trackRecievedName.Text = displayNameTextBlock1.Text;
             trackRecievedArtist.Text = displayArtistTextBlock1.Text;
+            
         }
 
         private void displayCoverImage2_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            StartLoadingPlayer();
             ClearPlayer();
             hubConnection.InvokeAsync("GetAudioBytes", displayNameTextBlock2.Text);
             trackRecievedCover.Source = displayCoverImage2.Source;
@@ -466,6 +473,7 @@ namespace WpfApp2
 
         private void displayCoverImage3_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            StartLoadingPlayer();
             ClearPlayer();
             hubConnection.InvokeAsync("GetAudioBytes", displayNameTextBlock3.Text);
             trackRecievedCover.Source = displayCoverImage3.Source;
@@ -491,6 +499,160 @@ namespace WpfApp2
             timerPaused = false;
         }
 
+        private void ClearDisplay()
+        {
+            displayCoverImage0.Source = null;
+            displayCoverImage1.Source = null;
+            displayCoverImage2.Source = null;
+            displayCoverImage3.Source = null;
+            displayNameTextBlock0.Text = string.Empty;
+            displayNameTextBlock1.Text = string.Empty;
+            displayNameTextBlock2.Text = string.Empty;
+            displayNameTextBlock3.Text = string.Empty;
+            displayArtistTextBlock0.Text = string.Empty;
+            displayArtistTextBlock1.Text = string.Empty;
+            displayArtistTextBlock2.Text = string.Empty;
+            displayArtistTextBlock3.Text = string.Empty;
+            displayDateTextBlock0.Text = string.Empty;
+            displayDateTextBlock1.Text = string.Empty;
+            displayDateTextBlock2.Text = string.Empty;
+            displayDateTextBlock3.Text = string.Empty;
+            displayDurationTextBlock0.Text = string.Empty;
+            displayDurationTextBlock1.Text = string.Empty;
+            displayDurationTextBlock2.Text = string.Empty;
+            displayDurationTextBlock3.Text = string.Empty;
+            deleteTrackButton0.Visibility = Visibility.Collapsed;
+            deleteTrackButton1.Visibility = Visibility.Collapsed;
+            deleteTrackButton2.Visibility = Visibility.Collapsed;
+            deleteTrackButton3.Visibility = Visibility.Collapsed;
+            tempBytes = new byte[] { };
+            recievedBytes = new List<byte>();
+            recievedBytesDisplayCover = new List<byte>();
+            tempBytesCover = new byte[] { };
+        }
+
+        private async Task GetDisplays()
+        {
+            await hubConnection.InvokeAsync("GetCoverForDisplay", displayStartIndex);
+            await hubConnection.InvokeAsync("GetNamesForDisplay", displayStartIndex);
+            await hubConnection.InvokeAsync("GetArtistsForDisplay", displayStartIndex);
+            await hubConnection.InvokeAsync("GetDatesForDisplay", displayStartIndex);
+            await hubConnection.InvokeAsync("GetDurationForDisplay", displayStartIndex);
+        }
+        private async void moveDisplayDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            StartLoading();
+            ClearDisplay();
+            displayStartIndex += 4;
+            track0NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+            track1NumberTextBlock.Text = (2 + displayStartIndex).ToString();
+            track2NumberTextBlock.Text = (3 + displayStartIndex).ToString();
+            track3NumberTextBlock.Text = (4 + displayStartIndex).ToString();
+            await GetDisplays();
+            EndLoading();
+        }
+
         
+
+        private async void moveDisplayUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(displayStartIndex!=0)
+            {
+                StartLoading();
+                ClearDisplay();
+                displayStartIndex -= 4;
+                track0NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+                track1NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+                track2NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+                track3NumberTextBlock.Text = (1 + displayStartIndex).ToString();
+                await GetDisplays();
+                EndLoading();
+            }
+        }
+
+        private void StartLoading()
+        {
+            LoadingScreen.Visibility = Visibility.Visible;
+        }
+
+        private void EndLoading()
+        {
+            LoadingScreen.Visibility = Visibility.Collapsed;
+        }
+
+        private void StartLoadingPlayer()
+        {
+            LoadingScreenPlayer.Visibility = Visibility.Visible;
+            playTrackButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void EndLoadingPlayer()
+        {
+            LoadingScreenPlayer.Visibility=Visibility.Collapsed;
+            playTrackButton.Visibility = Visibility.Visible;
+        }
+
+        private async void deleteTrackButton0_Click_1(object sender, RoutedEventArgs e)
+        {
+            StartLoading();
+            await hubConnection.InvokeAsync("DeleteTrack", displayNameTextBlock0.Text);
+            ClearDisplay();
+            await GetDisplays();
+            EndLoading();
+        }
+
+        private async void deleteTrackButton1_Click(object sender, RoutedEventArgs e)
+        {
+            StartLoading();
+            await hubConnection.InvokeAsync("DeleteTrack", displayNameTextBlock1.Text);
+            ClearDisplay();
+            await GetDisplays();
+            EndLoading();
+        }
+
+        private async void deleteTrackButton2_Click(object sender, RoutedEventArgs e)
+        {
+            StartLoading();
+            await hubConnection.InvokeAsync("DeleteTrack", displayNameTextBlock2.Text);
+            ClearDisplay();
+            await GetDisplays();
+            EndLoading();
+        }
+
+        private async void deleteTrackButton3_Click(object sender, RoutedEventArgs e)
+        {
+            StartLoading();
+            await hubConnection.InvokeAsync("DeleteTrack", displayNameTextBlock3.Text);
+            ClearDisplay();
+            await GetDisplays();
+            EndLoading();
+        }
+
+        private void addTrackButton_Click(object sender, RoutedEventArgs e)
+        {
+            addTrackWindow = new AddTrackWindow(this);
+            addTrackWindow.Show();
+        }
+
+        public async void addTrack(string name, string artist, string audioPath, string coverPath)
+        {
+            StartLoading();
+            tempBytes = File.ReadAllBytes(audioPath);
+            tempBytesCover = File.ReadAllBytes(coverPath);
+            List<List<byte>> listsList = SplitList(tempBytes.ToList(), 1000000);
+            foreach (List<byte> list in listsList)
+            {
+                await hubConnection.InvokeAsync("SendAudioBytes", list, name, artist);
+            }
+
+            List<List<byte>> listsListCover = SplitList(tempBytesCover.ToList(), 1000000);
+            foreach (List<byte> list2 in listsListCover)
+            {
+                await hubConnection.InvokeAsync("SendCoverBytes", list2, name, artist);
+            }
+            ClearDisplay();
+            await GetDisplays();
+            EndLoading();
+        }
     }
 }

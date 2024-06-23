@@ -11,5 +11,10 @@
         <BitmapImage x:Key="playTrack" UriSource="Resources/UI/playTrackIcon.png"/>
         <BitmapImage x:Key="volume" UriSource="Resources/UI/volumeIcon.png"/>
         <BitmapImage x:Key="pauseTrack" UriSource="Resources/UI/pauseTrackIcon.png"/>
+        <BitmapImage x:Key="moveDown" UriSource="Resources/UI/arrowDown.png"/>
+        <BitmapImage x:Key="moveUp" UriSource="Resources/UI/arrowUp.png"/>
+        <BitmapImage x:Key="remove" UriSource="Resources/UI/removeIcon.png"/>
+        <BitmapImage x:Key="addPlus" UriSource="Resources/UI/addPlus.png"/>
+        <BitmapImage x:Key="default" UriSource="Resources/UI/defaultIcon.png"/>
     </Application.Resources>
 </Application>
