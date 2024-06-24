@@ -5,7 +5,7 @@ using System.Transactions;
 
 namespace WebApplication1.Hubs
 {
-    public class ChatHub : Hub
+    public class MainHub : Hub
     {
         private FileManager fileManager = new FileManager();
         private TrackList trackList = new TrackList();
