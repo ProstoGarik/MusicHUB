@@ -1,0 +1,22 @@
+﻿<Application x:Class="MusicHUBClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MusicHUBClient"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <Style x:Key="CustomFont">
+            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Noto Sans"/>
+        </Style>
+        <BitmapImage x:Key="exitX" UriSource="Resources/UI/exitX.png"/>
+        <BitmapImage x:Key="playTrack" UriSource="Resources/UI/playTrackIcon.png"/>
+        <BitmapImage x:Key="volume" UriSource="Resources/UI/volumeIcon.png"/>
+        <BitmapImage x:Key="pauseTrack" UriSource="Resources/UI/pauseTrackIcon.png"/>
+        <BitmapImage x:Key="moveDown" UriSource="Resources/UI/arrowDown.png"/>
+        <BitmapImage x:Key="moveUp" UriSource="Resources/UI/arrowUp.png"/>
+        <BitmapImage x:Key="remove" UriSource="Resources/UI/removeIcon.png"/>
+        <BitmapImage x:Key="addPlus" UriSource="Resources/UI/addPlus.png"/>
+        <BitmapImage x:Key="default" UriSource="Resources/UI/defaultIcon.png"/>
+        <BitmapImage x:Key="maximize" UriSource="Resources/UI/maximizeIcon.png"/>
+        <BitmapImage x:Key="maximize2" UriSource="Resources/UI/maximizeIcon2.png"/>
+    </Application.Resources>
+</Application>
