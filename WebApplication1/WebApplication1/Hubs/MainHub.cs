@@ -1,4 +1,4 @@
-﻿using ClassLibrary1;
+﻿using HubClassLibrary;
 using Microsoft.AspNetCore.SignalR;
 using System.Transactions;
 

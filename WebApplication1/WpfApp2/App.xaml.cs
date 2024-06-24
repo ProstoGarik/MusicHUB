@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace WpfApp2
+namespace MusicHUBClient
 {
     /// <summary>
     /// Interaction logic for App.xaml

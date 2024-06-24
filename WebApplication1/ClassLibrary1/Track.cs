@@ -1,5 +1,5 @@
 using NAudio.Wave;
-namespace ClassLibrary1
+namespace HubClassLibrary
 {
     public class Track
     {

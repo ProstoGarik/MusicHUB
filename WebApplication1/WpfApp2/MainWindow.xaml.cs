@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Win32;
 
-namespace WpfApp2
+namespace MusicHUBClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

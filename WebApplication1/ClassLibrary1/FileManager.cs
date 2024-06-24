@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using System.Text.Json;
 using System.IO.Compression;
 
-namespace ClassLibrary1
+namespace HubClassLibrary
 {
 
     public class FileManager

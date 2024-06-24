@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfApp2
+namespace MusicHUBClient
 {
     /// <summary>
     /// Логика взаимодействия для AddTrackWindow.xaml
