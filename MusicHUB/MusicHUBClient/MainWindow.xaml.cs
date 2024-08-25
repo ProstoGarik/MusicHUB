@@ -40,6 +40,12 @@ namespace MusicHUBClient
         {
             InitializeComponent();
 
+            System.IO.DirectoryInfo di = new DirectoryInfo(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\"));
+            foreach(FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+
             hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7196/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
             Loaded += MainWindow_Loaded;
@@ -631,11 +637,11 @@ namespace MusicHUBClient
             addTrackWindow.Show();
         }
 
-        public async void addTrack(string name, string artist, string audioPath, string coverPath)
+        public async void addTrack(string name, string artist, string audioPath, byte[] coverBytes)
         {
             StartLoading();
             tempBytes = File.ReadAllBytes(audioPath);
-            tempBytesCover = File.ReadAllBytes(coverPath);
+            tempBytesCover = coverBytes;
             List<List<byte>> listsList = SplitList(tempBytes.ToList(), 1000000);
             foreach (List<byte> list in listsList)
             {
@@ -647,6 +653,7 @@ namespace MusicHUBClient
             {
                 await hubConnection.InvokeAsync("SendCoverBytes", list2, name, artist);
             }
+
             ClearDisplay();
             await GetDisplays();
             EndLoading();
