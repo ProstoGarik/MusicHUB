@@ -1,45 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using HubClassLibrary;
 using System.Text.Json;
-using System.IO.Compression;
 
-namespace HubClassLibrary
+public class FileManager
 {
+    private readonly string tempFolderPath = "/app/data"; // Используем папку в контейнере
 
-    public class FileManager
+    public void SaveFile(TrackList trackList)
     {
-        private readonly string tempFolderPath = "Z:\\TempFolder";
+        var options = new JsonSerializerOptions { WriteIndented = false };
 
-        public void SaveFile(TrackList trackList)
+        // Убедимся, что папка существует
+        if (!Directory.Exists(tempFolderPath))
+            Directory.CreateDirectory(tempFolderPath);
+
+        string jsonString = JsonSerializer.Serialize(trackList, options);
+        File.WriteAllText(Path.Combine(tempFolderPath, "tracklist.json"), jsonString);
+    }
+
+    public TrackList LoadFile()
+    {
+        try
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false // Отключаем форматирование
-            };
-            string jsonString = JsonSerializer.Serialize(trackList, options);
-
-            // Записываем JSON в файл
-            File.WriteAllText(Path.Combine(tempFolderPath, "tracklist.json"), jsonString);
+            string jsonFile = File.ReadAllText(Path.Combine(tempFolderPath, "tracklist.json"));
+            return JsonSerializer.Deserialize<TrackList>(jsonFile);
         }
-
-        public TrackList LoadFile()
+        catch
         {
-            try
-            {
-                // Читаем JSON из файла
-                string jsonFile = File.ReadAllText(Path.Combine(tempFolderPath, "tracklist.json"));
-
-                return JsonSerializer.Deserialize<TrackList>(jsonFile);
-            }
-            catch
-            {
-                return new TrackList();
-            }
+            return new TrackList();
         }
     }
 }

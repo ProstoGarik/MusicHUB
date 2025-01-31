@@ -46,7 +46,7 @@ namespace MusicHUBClient
                 file.Delete();
             }
 
-            hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7196/chat").Build();
+            hubConnection = new HubConnectionBuilder().WithUrl("http://localhost:8080/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
             Loaded += MainWindow_Loaded;
             tempBytes = new byte[] { };
