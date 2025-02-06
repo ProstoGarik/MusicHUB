@@ -54,5 +54,4 @@ namespace HubClassLibrary
         public string TrackArtist { get => trackArtist; set => trackArtist = value; }
         public DateTime TrackAdded { get => trackAdded; set => trackAdded = value; }
     }
-
 }
