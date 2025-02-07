@@ -46,7 +46,7 @@ namespace MusicHUBClient
                 file.Delete();
             }
 
-            hubConnection = new HubConnectionBuilder().WithUrl("http://localhost:8080/chat").Build();
+            hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.88.202:8080/chat").Build();
             hubConnection.Closed += HubConnetction_Closed;
             Loaded += MainWindow_Loaded;
             tempBytes = new byte[] { };
@@ -131,69 +131,9 @@ namespace MusicHUBClient
                 recievedBytesDisplayCover.AddRange(bytes);
             });
 
-            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", (count, index) =>
+            hubConnection.On<int, int>("RecieveDisplayCoverBytesDone", async (count, index) =>
             {
-                switch (index)
-                {
-                    case 0:
-                        ApplyDisplayCover(0);
-                        Dispatcher.Invoke(() =>
-                        {
-                            displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
-                        });
-                        recievedBytesDisplayCover = new List<byte>();
-                        break;
-                    case 1:
-                        ApplyDisplayCover(1);
-                        Dispatcher.Invoke(() =>
-                        {
-                            try
-                            {
-                                displayCoverImage1.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display2.png")));
-                            }
-                            catch
-                            {
-                                Thread.Sleep(300);
-                                ApplyDisplayCover(1);
-                            }
-                        });
-                        recievedBytesDisplayCover = new List<byte>();
-                        break;
-                    case 2:
-                        ApplyDisplayCover(2);
-                        Dispatcher.Invoke(() =>
-                        {
-                            try
-                            {
-                                displayCoverImage2.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display3.png")));
-                            }
-                            catch
-                            {
-                                Thread.Sleep(300);
-                                ApplyDisplayCover(2);
-                            }
-                        });
-                        recievedBytesDisplayCover = new List<byte>();
-                        break;
-                    case 3:
-                        ApplyDisplayCover(3);
-                        Dispatcher.Invoke(() =>
-                        {
-                            try
-                            {
-                                displayCoverImage3.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display4.png")));
-                            }
-                            catch
-                            {
-                                Thread.Sleep(300);
-                                ApplyDisplayCover(3);
-                            }
-                        });
-                        recievedBytesDisplayCover = new List<byte>();
-                        break;
-                    default:
-                        break;
-                }
+                await HandleDisplayCoverAsync(count, index);
             });
 
             hubConnection.On<string, int>("RecieveDisplayName", (name, index) =>
@@ -357,6 +297,71 @@ namespace MusicHUBClient
                     break;
             }
             
+        }
+
+        private async Task HandleDisplayCoverAsync(int count, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    await ApplyDisplayCover(0);
+                    Dispatcher.Invoke(() =>
+                    {
+                        displayCoverImage0.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display1.png")));
+                    });
+                    recievedBytesDisplayCover = new List<byte>();
+                    break;
+                case 1:
+                    await ApplyDisplayCover(1);
+                    Dispatcher.Invoke(() =>
+                    {
+                        try
+                        {
+                            displayCoverImage1.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display2.png")));
+                        }
+                        catch
+                        {
+                            Thread.Sleep(300);
+                            ApplyDisplayCover(1).Wait(); // Синхронный вызов, если нужно
+                        }
+                    });
+                    recievedBytesDisplayCover = new List<byte>();
+                    break;
+                case 2:
+                    await ApplyDisplayCover(2);
+                    Dispatcher.Invoke(() =>
+                    {
+                        try
+                        {
+                            displayCoverImage2.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display3.png")));
+                        }
+                        catch
+                        {
+                            Thread.Sleep(300);
+                            ApplyDisplayCover(2).Wait(); // Синхронный вызов, если нужно
+                        }
+                    });
+                    recievedBytesDisplayCover = new List<byte>();
+                    break;
+                case 3:
+                    await ApplyDisplayCover(3);
+                    Dispatcher.Invoke(() =>
+                    {
+                        try
+                        {
+                            displayCoverImage3.Source = new BitmapImage(new Uri(System.IO.Path.GetFullPath("..\\..\\..\\RunningTemp\\display4.png")));
+                        }
+                        catch
+                        {
+                            Thread.Sleep(300);
+                            ApplyDisplayCover(3).Wait(); // Синхронный вызов, если нужно
+                        }
+                    });
+                    recievedBytesDisplayCover = new List<byte>();
+                    break;
+                default:
+                    break;
+            }
         }
         private void exitAppButton_Click(object sender, RoutedEventArgs e)
         {
