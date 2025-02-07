@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using System.Diagnostics;
 namespace HubClassLibrary
 {
     public class Track
@@ -39,13 +40,31 @@ namespace HubClassLibrary
 
         public TimeSpan GetMp3Duration()
         {
-            using (MemoryStream mp3Stream = new MemoryStream(TrackAudioBytes.ToArray(), writable: false))
+            string tempFilePath = "/tmp/temp_audio.mp3";
+            File.WriteAllBytes(tempFilePath, TrackAudioBytes.ToArray());
+
+            var process = new Process
             {
-                using (Mp3FileReader mp3Reader = new Mp3FileReader(mp3Stream))
+                StartInfo = new ProcessStartInfo
                 {
-                    return mp3Reader.TotalTime;
+                    FileName = "ffprobe",
+                    Arguments = $"-i \"{tempFilePath}\" -show_entries format=duration -v quiet -of csv=\"p=0\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
                 }
+            };
+
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
+
+            if (double.TryParse(output, out double seconds))
+            {
+                return TimeSpan.FromSeconds(seconds);
             }
+
+            throw new Exception("Не удалось получить длительность MP3.");
         }
 
         public string TrackName { get => trackName; set => trackName = value; }
